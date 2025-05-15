@@ -1,0 +1,75 @@
+.navbar-toggler {
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    }
+
+    footer {
+        background-color: #0d4373;
+        color: white;
+        padding: 20px 0;
+    }
+
+    .brand-name {
+        color: #f08a2d;
+        font-weight: bold;
+    }
+
+    .contact-info strong {
+        color: white;
+    }
+
+    .text-small {
+        font-size: 0.9rem;
+    }
+
+    .about-section {
+        background-color: #0d4373;
+        color: white;
+        margin: 80px;
+        padding: 40px 20px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .about-section h2 {
+        font-weight: bold;
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+    }
+
+    .about-section p {
+        max-width: 800px;
+        margin: 0 auto;
+        font-size: 1.1rem;
+    }
+
+.logo {
+    width: 70px; 
+    height: 70px; 
+    margin-right: 10px;
+}
+
+.navbar {
+    background-color: #0A4B7C;
+}
+
+.btn {
+    background-color: #F4A261; 
+    color: #fff;
+}
+
+.a-iniciar-seccion {
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    display: inline-block;
+    margin: 0 auto;
+}
+
+.text-x {
+    color: aliceblue;
+}
