@@ -1,0 +1,113 @@
+/* Estilos personalizados combinados con Bootstrap */
+.navbar {
+    background-color: #1a1a1a;
+    /* Negro suave */
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    width: 70px;
+    height: 70px;
+    margin-right: 10px;
+}
+
+.navbar-brand span {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* Ajuste del botón hamburguesa para pantallas pequeñas */
+.navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.5);
+    /* Borde blanco */
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 1)' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+
+/* Botones en el navbar */
+.navbar-nav .nav-item .btn {
+    margin-left: 10px;
+}
+
+.btn {
+    margin: 10px;
+}
+
+/* Card personalizada con Bootstrap */
+.dashboard-card {
+    background-color: #adadad;
+    /* Negro más suave */
+    border-radius: 15px;
+    padding: 30px;
+    margin: 50px auto;
+    max-width: 800px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.dashboard-btn {
+    background-color: #333333;
+    /* Negro suave para los botones */
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    border-radius: 10px;
+    transition: background-color 0.3s;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+    max-width: 250px;
+}
+
+.dashboard-btn:hover {
+    background-color: #4d4d4d;
+    /* Tono más claro al pasar el mouse */
+}
+
+/* Footer */
+footer {
+    background-color: #1a1a1a;
+    /* Negro suave */
+    color: white;
+    padding: 20px 0;
+}
+
+.brand-name {
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.contact-info strong {
+    color: white;
+}
+
+.text-small {
+    font-size: 0.9rem;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+}
+

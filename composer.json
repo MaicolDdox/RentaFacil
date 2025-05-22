@@ -1,0 +1,20 @@
+{
+    "name": "maicolddox/renta-facil",
+    "description": "Proyecto de alquiler de propiedades",
+    "type": "project",
+    "require": {
+        "phpmailer/phpmailer": "6.10.0"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Maicolddox\\RentaFacil\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "MaicolDdox",
+            "email": "maicolduvangascarodas@gmail.com"
+        }
+    ]
+}
