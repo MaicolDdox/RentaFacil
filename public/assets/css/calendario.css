@@ -1,0 +1,89 @@
+/* Estilos para el calendario */
+.calendar-container {
+    background-color: #2c2c2c;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.calendar-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.calendar-table th,
+.calendar-table td {
+    text-align: center;
+    padding: 10px;
+    color: white !important;
+}
+
+.calendar-table th {
+    background-color: #444;
+}
+
+.calendar-table td {
+    background-color: #333;
+    border: 1px solid #555;
+    height: 80px;
+    vertical-align: top;
+    position: relative;
+}
+
+.calendar-table td.empty {
+    background-color: #222;
+}
+
+.calendar-table td.has-event {
+    background-color: #dc3545;
+    /* Rojo para días con eventos */
+    cursor: pointer;
+}
+
+.calendar-table td.has-event:hover .event-tooltip {
+    display: block;
+}
+
+.event-tooltip {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #444;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    z-index: 1000;
+    white-space: nowrap;
+    font-size: 0.9em;
+}
+
+.calendar-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.calendar-nav a {
+    color: white;
+    text-decoration: none;
+    padding: 5px 10px;
+    background-color: #555;
+    border-radius: 5px;
+}
+
+.calendar-nav a:hover {
+    background-color: #666;
+}
+
+.calendar-nav h2 {
+    margin: 0;
+    color: white !important;
+}
+
+.container,
+.container * {
+    color: white !important;
+}

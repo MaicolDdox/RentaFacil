@@ -1,6 +1,8 @@
 <?php
 // Iniciar la sesión
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Verificar si el usuario está logueado y es propietario
 if (!isset($_SESSION['user_id']) || $_SESSION['rol'] !== 'propietario') {
@@ -37,8 +39,7 @@ $daysInMonth = (int)$firstDayOfMonth->format('t');
 
 // Obtener contratos que finalizan en el mes seleccionado
 try {
-    $stmt = $pdo->prepare("
-        SELECT c.id, c.fecha_fin, p.direccion, u.nombre AS arrendatario_nombre
+    $stmt = $pdo->prepare(" SELECT c.id, c.fecha_fin, p.direccion, u.nombre AS arrendatario_nombre
         FROM contratos c
         JOIN propiedades p ON c.id_propiedad = p.id
         JOIN arrendatarios a ON c.id_arrendatario = a.id
@@ -66,84 +67,17 @@ try {
 }
 ?>
 
-<?php include '../../layouts/container/propietario/headerPropietario.php'; ?>
+<div class="row">
+    <div class="col-12">
+        <div class="card" style="background-color: #2c2c2c; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+            <div class="card-body text-white">
+                <h2 class="text-center mb-4">CALENDARIO</h2>
+            </div>
+        </div>
+    </div>
+</div>
 
-<style>
-    /* Estilos para el calendario */
-    .calendar-container {
-        background-color: #2c2c2c;
-        border-radius: 15px;
-        padding: 20px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-    .calendar-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    .calendar-table th, .calendar-table td {
-        text-align: center;
-        padding: 10px;
-        color: white !important;
-    }
-    .calendar-table th {
-        background-color: #444;
-    }
-    .calendar-table td {
-        background-color: #333;
-        border: 1px solid #555;
-        height: 80px;
-        vertical-align: top;
-        position: relative;
-    }
-    .calendar-table td.empty {
-        background-color: #222;
-    }
-    .calendar-table td.has-event {
-        background-color: #dc3545; /* Rojo para días con eventos */
-        cursor: pointer;
-    }
-    .calendar-table td.has-event:hover .event-tooltip {
-        display: block;
-    }
-    .event-tooltip {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        background-color: #444;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 5px;
-        z-index: 1000;
-        white-space: nowrap;
-        font-size: 0.9em;
-    }
-    .calendar-nav {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-    .calendar-nav a {
-        color: white;
-        text-decoration: none;
-        padding: 5px 10px;
-        background-color: #555;
-        border-radius: 5px;
-    }
-    .calendar-nav a:hover {
-        background-color: #666;
-    }
-    .calendar-nav h2 {
-        margin: 0;
-        color: white !important;
-    }
-    .container, .container * {
-        color: white !important;
-    }
-</style>
-
+<link rel="stylesheet" href="../../../../public/assets/css/calendario.css">
 <div class="container mt-5">
     <div class="calendar-container">
         <!-- Navegación del calendario -->
@@ -154,9 +88,9 @@ try {
             $nextMonth = $month == 12 ? 1 : $month + 1;
             $nextYear = $month == 12 ? $year + 1 : $year;
             ?>
-            <a href="?month=<?php echo $prevMonth; ?>&year=<?php echo $prevYear; ?>">&lt; Anterior</a>
+            <a href="?page=calendario&month=<?php echo $prevMonth; ?>&year=<?php echo $prevYear; ?>">&lt; Anterior</a>
             <h2><?php echo $firstDayOfMonth->format('F Y'); ?></h2>
-            <a href="?month=<?php echo $nextMonth; ?>&year=<?php echo $nextYear; ?>">Siguiente &gt;</a>
+            <a href="?page=calendario&month=<?php echo $nextMonth; ?>&year=<?php echo $nextYear; ?>">Siguiente &gt;</a>
         </div>
 
         <!-- Tabla del calendario -->
@@ -213,5 +147,3 @@ try {
         </table>
     </div>
 </div>
-
-<?php include '../../layouts/container/propietario/footerPropietario.php'; ?>

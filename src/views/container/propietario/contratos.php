@@ -1,6 +1,8 @@
 <?php
 // Iniciar la sesión
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Verificar si el usuario está logueado y es propietario
 if (!isset($_SESSION['user_id']) || $_SESSION['rol'] !== 'propietario') {
@@ -141,7 +143,7 @@ try {
     $arrendatarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Obtener contratos activos
-    $stmt = $pdo->prepare("SELECT c.id, p.direccion, p.tipo, p.precio, u.nombre AS arrendatario_nombre, c.fecha_inicio, c.fecha_fin, c.estado, i.url_imagen 
+    $stmt = $pdo->prepare("SELECT c.id, p.direccion, p.precio, u.nombre AS arrendatario_nombre, c.fecha_inicio, c.fecha_fin, c.estado, i.url_imagen 
                            FROM contratos c 
                            JOIN propiedades p ON c.id_propiedad = p.id 
                            JOIN arrendatarios a ON c.id_arrendatario = a.id 
@@ -154,8 +156,6 @@ try {
     $error = "Error al cargar datos: " . $e->getMessage();
 }
 ?>
-
-<?php include '../../layouts/container/propietario/headerPropietario.php'; ?>
 
 <div class="container mt-5">
     <!-- Formulario para crear contrato -->
@@ -170,7 +170,7 @@ try {
                         <div class="alert alert-success" role="alert"><?php echo $success; ?></div>
                     <?php endif; ?>
 
-                    <form method="POST" action="contratos.php">
+                    <form method="POST" action="dashboardPropietario.php?page=contratos">
                         <input type="hidden" name="crear_contrato" value="1">
                         <div class="mb-3">
                             <label for="id_arrendatario" class="form-label">Arrendatario</label>
@@ -221,12 +221,11 @@ try {
                                         <img src="<?php echo '../../../public/' . htmlspecialchars($contrato['url_imagen'] ?? ''); ?>" class="card-img-top" alt="Imagen" style="height: 200px; object-fit: cover;" onerror="this.src='../../../public/assets/img/default.jpg';">
                                         <div class="card-body">
                                             <h5 class="card-title"><?php echo htmlspecialchars($contrato['direccion']); ?></h5>
-                                            <p class="card-text">Tipo: <?php echo htmlspecialchars($contrato['tipo']); ?></p>
                                             <p class="card-text">Precio: <?php echo number_format($contrato['precio'], 2); ?></p>
                                             <p class="card-text">Arrendatario: <?php echo htmlspecialchars($contrato['arrendatario_nombre']); ?></p>
                                             <p class="card-text">Inicio: <?php echo $contrato['fecha_inicio']; ?></p>
                                             <p class="card-text">Fin: <?php echo $contrato['fecha_fin']; ?></p>
-                                            <form method="POST" action="contratos.php" style="display:inline;" id="finishForm<?php echo $contrato['id']; ?>">
+                                            <form method="POST" action="dashboardPropietario.php?page=contratos" style="display:inline;" id="finishForm<?php echo $contrato['id']; ?>">
                                                 <input type="hidden" name="finalizar" value="1">
                                                 <input type="hidden" name="contrato_id" value="<?php echo $contrato['id']; ?>">
                                                 <button type="button" class="btn btn-danger w-100" onclick="confirmFinish(<?php echo $contrato['id']; ?>)">Finalizar</button>
@@ -245,43 +244,42 @@ try {
     </div>
 </div>
 
+
 <!-- Script para confirmación de finalización con SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-function confirmFinish(id) {
-    Swal.fire({
-        title: '¿Estás seguro?',
-        text: '¿Deseas finalizar este contrato y liberar la propiedad?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#dc3545',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Confirmar',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            document.getElementById('finishForm' + id).submit();
+    function confirmFinish(id) {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: '¿Deseas finalizar este contrato y liberar la propiedad?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Confirmar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('finishForm' + id).submit();
+            }
+        });
+    }
+
+    // Autocompletar el campo de propiedad al seleccionar un arrendatario
+    document.getElementById('id_arrendatario').addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const idPropiedad = selectedOption.getAttribute('data-id-propiedad');
+        const selectPropiedad = document.getElementById('id_propiedad');
+
+        if (idPropiedad) {
+            for (let option of selectPropiedad.options) {
+                if (option.value == idPropiedad) {
+                    option.selected = true;
+                    break;
+                }
+            }
+        } else {
+            selectPropiedad.selectedIndex = 0; // Resetear a "Selecciona una propiedad"
         }
     });
-}
-
-// Autocompletar el campo de propiedad al seleccionar un arrendatario
-document.getElementById('id_arrendatario').addEventListener('change', function() {
-    const selectedOption = this.options[this.selectedIndex];
-    const idPropiedad = selectedOption.getAttribute('data-id-propiedad');
-    const selectPropiedad = document.getElementById('id_propiedad');
-
-    if (idPropiedad) {
-        for (let option of selectPropiedad.options) {
-            if (option.value == idPropiedad) {
-                option.selected = true;
-                break;
-            }
-        }
-    } else {
-        selectPropiedad.selectedIndex = 0; // Resetear a "Selecciona una propiedad"
-    }
-});
 </script>
-
-<?php include '../../layouts/container/propietario/footerPropietario.php'; ?>

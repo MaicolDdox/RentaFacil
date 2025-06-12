@@ -1,6 +1,8 @@
 <?php
 // Iniciar la sesión
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Verificar si el usuario está logueado y es propietario
 if (!isset($_SESSION['user_id']) || $_SESSION['rol'] !== 'propietario') {
@@ -29,79 +31,70 @@ try {
 // Procesar la creación de un arrendatario (manual o desde postulación)
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['crear'])) {
     $nombre = trim($_POST['nombre'] ?? '');
-    $correo = trim($_POST['correo'] ?? '');
+    $correo = trim($_POST['correo'] ?? ''); 
     $telefono = trim($_POST['telefono'] ?? '');
     $contrasena = trim($_POST['contrasena'] ?? '');
     $postulacion_id = isset($_POST['postulacion_id']) ? trim($_POST['postulacion_id']) : null;
 
-    // Validaciones
-    if (empty($nombre) || empty($correo) || empty($contrasena)) {
-        $error = "Por favor, completa todos los campos obligatorios.";
-    } elseif (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-        $error = "El correo no es válido.";
-    } elseif (strlen($contrasena) < 6) {
-        $error = "La contraseña debe tener al menos 6 caracteres.";
-    } else {
-        try {
-            // Verificar si el correo ya existe
-            $stmt = $pdo->prepare("SELECT COUNT(*) FROM usuarios WHERE correo = :correo");
-            $stmt->execute(['correo' => $correo]);
-            if ($stmt->fetchColumn() > 0) {
-                $error = "El correo ya está registrado.";
-            } else {
-                $pdo->beginTransaction();
+    try {
+        // Verificar si el correo ya existe
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM usuarios WHERE correo = :correo");
+        $stmt->execute(['correo' => $correo]);
+        if ($stmt->fetchColumn() > 0) {
+            $error = "El correo ya está registrado.";
+        } else {
+            $pdo->beginTransaction();
 
-                // Insertar en la tabla usuarios
-                $stmt = $pdo->prepare("INSERT INTO usuarios (nombre, correo, telefono, contrasena, created_at, updated_at, is_verified) VALUES (:nombre, :correo, :telefono, :contrasena, NOW(), NOW(), 1)");
-                $stmt->execute([
-                    'nombre' => htmlspecialchars($nombre),
-                    'correo' => $correo,
-                    'telefono' => $telefono ? htmlspecialchars($telefono) : null,
-                    'contrasena' => password_hash($contrasena, PASSWORD_DEFAULT)
-                ]);
+            // Insertar en la tabla usuarios
+            $stmt = $pdo->prepare("INSERT INTO usuarios (nombre, correo, telefono, contrasena, created_at, updated_at, is_verified) VALUES (:nombre, :correo, :telefono, :contrasena, NOW(), NOW(), 1)");
+            $stmt->execute([
+                'nombre' => htmlspecialchars($nombre),
+                'correo' => $correo,
+                'telefono' => $telefono ? htmlspecialchars($telefono) : null,
+                'contrasena' => password_hash($contrasena, PASSWORD_DEFAULT)
+            ]);
 
-                // Obtener el ID del usuario recién creado
-                $user_id = $pdo->lastInsertId();
+            // Obtener el ID del usuario recién creado
+            $user_id = $pdo->lastInsertId();
 
-                // Obtener el id_propiedad de la postulación si existe
-                $id_propiedad = null;
-                if ($postulacion_id) {
-                    $stmt = $pdo->prepare("SELECT id_propiedad FROM postulaciones WHERE id = :postulacion_id AND id_propiedad IN (SELECT id FROM propiedades WHERE id_propietario = :id_propietario)");
-                    $stmt->execute(['postulacion_id' => $postulacion_id, 'id_propietario' => $id_propietario]);
-                    $postulacion = $stmt->fetch(PDO::FETCH_ASSOC);
-                    if ($postulacion) {
-                        $id_propiedad = $postulacion['id_propiedad'];
-                    } else {
-                        $pdo->rollBack();
-                        $error = "No tienes permiso para crear un arrendatario desde esta postulación.";
-                        goto end_transaction;
-                    }
+            // Obtener el id_propiedad de la postulación si existe
+            $id_propiedad = null;
+            if ($postulacion_id) {
+                $stmt = $pdo->prepare("SELECT id_propiedad FROM postulaciones WHERE id = :postulacion_id AND id_propiedad IN (SELECT id FROM propiedades WHERE id_propietario = :id_propietario)");
+                $stmt->execute(['postulacion_id' => $postulacion_id, 'id_propietario' => $id_propietario]);
+                $postulacion = $stmt->fetch(PDO::FETCH_ASSOC);
+                if ($postulacion) {
+                    $id_propiedad = $postulacion['id_propiedad'];
+                } else {
+                    $pdo->rollBack();
+                    $error = "No tienes permiso para crear un arrendatario desde esta postulación.";
+                    goto end_transaction;
                 }
-
-                // Insertar en la tabla arrendatarios con id_propietario
-                $stmt = $pdo->prepare("INSERT INTO arrendatarios (id_usuario, id_propiedad, id_propietario) VALUES (:user_id, :id_propiedad, :id_propietario)");
-                $stmt->execute([
-                    'user_id' => $user_id,
-                    'id_propiedad' => $id_propiedad,
-                    'id_propietario' => $id_propietario
-                ]);
-
-                // Eliminar la postulación si se creó desde una
-                if ($postulacion_id) {
-                    $stmt = $pdo->prepare("DELETE FROM postulaciones WHERE id = :postulacion_id");
-                    $stmt->execute(['postulacion_id' => $postulacion_id]);
-                }
-
-                $pdo->commit();
-                $success = "Arrendatario creado correctamente.";
             }
-        } catch (PDOException $e) {
-            $pdo->rollBack();
-            $error = "Error al crear el arrendatario: " . $e->getMessage();
+
+            // Insertar en la tabla arrendatarios con id_propietario
+            $stmt = $pdo->prepare("INSERT INTO arrendatarios (id_usuario, id_propiedad, id_propietario) VALUES (:user_id, :id_propiedad, :id_propietario)");
+            $stmt->execute([
+                'user_id' => $user_id,
+                'id_propiedad' => $id_propiedad,
+                'id_propietario' => $id_propietario
+            ]);
+
+            // Eliminar la postulación si se creó desde una
+            if ($postulacion_id) {
+                $stmt = $pdo->prepare("DELETE FROM postulaciones WHERE id = :postulacion_id");
+                $stmt->execute(['postulacion_id' => $postulacion_id]);
+            }
+
+            $pdo->commit();
+            $success = "Arrendatario creado correctamente.";
         }
+    } catch (PDOException $e) {
+        $pdo->rollBack();
+        $error = "Error al crear el arrendatario: " . $e->getMessage();
     }
-    end_transaction:
 }
+end_transaction:
 
 // Procesar la edición de un arrendatario
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['editar'])) {
@@ -111,51 +104,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['editar'])) {
     $telefono = trim($_POST['telefono'] ?? '');
     $contrasena = trim($_POST['contrasena'] ?? '');
 
-    // Validaciones
-    if (empty($nombre) || empty($correo)) {
-        $error = "Por favor, completa todos los campos obligatorios.";
-    } elseif (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-        $error = "El correo no es válido.";
-    } else {
-        try {
-            // Verificar si el arrendatario pertenece al propietario
-            $stmt = $pdo->prepare("SELECT id_propietario FROM arrendatarios WHERE id_usuario = :user_id");
-            $stmt->execute(['user_id' => $user_id]);
-            $propietario = $stmt->fetchColumn();
-            if ($propietario != $id_propietario) {
-                $error = "No tienes permiso para editar este arrendatario.";
+
+    try {
+        // Verificar si el arrendatario pertenece al propietario
+        $stmt = $pdo->prepare("SELECT id_propietario FROM arrendatarios WHERE id_usuario = :user_id");
+        $stmt->execute(['user_id' => $user_id]);
+        $propietario = $stmt->fetchColumn();
+        if ($propietario != $id_propietario) {
+            $error = "No tienes permiso para editar este arrendatario.";
+        } else {
+            // Verificar si el correo ya existe (y no pertenece al usuario actual)
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM usuarios WHERE correo = :correo AND id != :user_id");
+            $stmt->execute(['correo' => $correo, 'user_id' => $user_id]);
+            if ($stmt->fetchColumn() > 0) {
+                $error = "El correo ya está registrado.";
             } else {
-                // Verificar si el correo ya existe (y no pertenece al usuario actual)
-                $stmt = $pdo->prepare("SELECT COUNT(*) FROM usuarios WHERE correo = :correo AND id != :user_id");
-                $stmt->execute(['correo' => $correo, 'user_id' => $user_id]);
-                if ($stmt->fetchColumn() > 0) {
-                    $error = "El correo ya está registrado.";
+                // Actualizar los datos del usuario
+                if (!empty($contrasena)) {
+                    $stmt = $pdo->prepare("UPDATE usuarios SET nombre = :nombre, correo = :correo, telefono = :telefono, contrasena = :contrasena, updated_at = NOW() WHERE id = :user_id");
+                    $stmt->execute([
+                        'nombre' => htmlspecialchars($nombre),
+                        'correo' => $correo,
+                        'telefono' => $telefono ? htmlspecialchars($telefono) : null,
+                        'contrasena' => password_hash($contrasena, PASSWORD_DEFAULT),
+                        'user_id' => $user_id
+                    ]);
                 } else {
-                    // Actualizar los datos del usuario
-                    if (!empty($contrasena)) {
-                        $stmt = $pdo->prepare("UPDATE usuarios SET nombre = :nombre, correo = :correo, telefono = :telefono, contrasena = :contrasena, updated_at = NOW() WHERE id = :user_id");
-                        $stmt->execute([
-                            'nombre' => htmlspecialchars($nombre),
-                            'correo' => $correo,
-                            'telefono' => $telefono ? htmlspecialchars($telefono) : null,
-                            'contrasena' => password_hash($contrasena, PASSWORD_DEFAULT),
-                            'user_id' => $user_id
-                        ]);
-                    } else {
-                        $stmt = $pdo->prepare("UPDATE usuarios SET nombre = :nombre, correo = :correo, telefono = :telefono, updated_at = NOW() WHERE id = :user_id");
-                        $stmt->execute([
-                            'nombre' => htmlspecialchars($nombre),
-                            'correo' => $correo,
-                            'telefono' => $telefono ? htmlspecialchars($telefono) : null,
-                            'user_id' => $user_id
-                        ]);
-                    }
-                    $success = "Arrendatario actualizado correctamente.";
+                    $stmt = $pdo->prepare("UPDATE usuarios SET nombre = :nombre, correo = :correo, telefono = :telefono, updated_at = NOW() WHERE id = :user_id");
+                    $stmt->execute([
+                        'nombre' => htmlspecialchars($nombre),
+                        'correo' => $correo,
+                        'telefono' => $telefono ? htmlspecialchars($telefono) : null,
+                        'user_id' => $user_id
+                    ]);
                 }
+                $success = "Arrendatario actualizado correctamente.";
             }
-        } catch (PDOException $e) {
-            $error = "Error al actualizar el arrendatario: " . $e->getMessage();
         }
+    } catch (PDOException $e) {
+        $error = "Error al actualizar el arrendatario: " . $e->getMessage();
     }
 }
 
@@ -210,22 +197,34 @@ try {
 }
 ?>
 
-<?php require '../../layouts/container/propietario/headerPropietario.php'; ?>
-
+<div class="row">
+    <div class="col-12">
+        <div class="card" style="background-color: #2c2c2c; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+            <div class="card-body text-white">
+                <h2 class="text-center mb-4">ARRENDATARIOS</h2>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="container mt-5">
-    <!-- Formulario único para crear arrendatario -->
-    <div class="row justify-content-center mb-5">
-        <div class="col-md-6">
-            <div class="card" style="background-color: #2c2c2c; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
-                <div class="card-body text-white">
-                    <h2 class="text-center mb-4">Crear Arrendatario</h2>
+
+    <!-- Modal para crear arrendatario -->
+    <div class="modal fade" id="crearArrendatarioModal" tabindex="-1" aria-labelledby="crearArrendatarioModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" style="background-color: #2c2c2c; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+                <div class="modal-header">
+                    <h2 class="modal-title text-white" id="crearArrendatarioModalLabel">Crear Arrendatario</h2>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-white">
+                    <!-- Mensajes de error/éxito solo si el modal está abierto -->
                     <?php if (!empty($error)): ?>
                         <div class="alert alert-danger" role="alert"><?php echo $error; ?></div>
                     <?php elseif (!empty($success)): ?>
                         <div class="alert alert-success" role="alert"><?php echo $success; ?></div>
                     <?php endif; ?>
 
-                    <form method="POST" action="arrendatarios.php" id="crearArrendatario">
+                    <form method="POST" action="dashboardPropietario.php?page=arrendatarios" id="crearArrendatario">
                         <input type="hidden" name="crear" value="1">
                         <!-- Campo para seleccionar postulación -->
                         <div class="mb-3">
@@ -241,7 +240,7 @@ try {
                         </div>
                         <!-- Nombre -->
                         <div class="mb-3">
-                            <label for="nombre" class="form-label">Nombre</label>
+                            <label for="nombre" class="form-label">Usuario</label>
                             <input type="text" id="nombre" name="nombre" class="form-control" required>
                         </div>
                         <!-- Correo -->
@@ -272,6 +271,14 @@ try {
             <div class="card" style="background-color: #2c2c2c; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
                 <div class="card-body text-white">
                     <h2 class="text-center mb-4">Lista de Arrendatarios</h2>
+                    <!-- Botón para abrir el modal de crear arrendatario -->
+                    <div class="row justify-content-center mb-4">
+                        <div class="col-md-6 text-center">
+                            <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#crearArrendatarioModal">
+                                <i class="fa-solid fa-user-plus"></i>
+                            </button>
+                        </div>
+                    </div>
                     <?php if (!empty($arrendatarios)): ?>
                         <table class="table table-dark table-hover">
                             <thead>
@@ -290,12 +297,16 @@ try {
                                         <td><?php echo htmlspecialchars($arrendatario['telefono'] ?? 'N/A'); ?></td>
                                         <td>
                                             <!-- Botón Editar -->
-                                            <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?php echo $arrendatario['id']; ?>">Editar</button>
+                                            <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?php echo $arrendatario['id']; ?>">
+                                                <i class="fa-solid fa-pen-to-square"></i>
+                                            </button>
                                             <!-- Botón Eliminar -->
-                                            <form method="POST" action="arrendatarios.php" style="display:inline;" id="deleteForm<?php echo $arrendatario['id']; ?>">
+                                            <form method="POST" action="dashboardPropietario.php?page=arrendatarios" style="display:inline;" id="deleteForm<?php echo $arrendatario['id']; ?>">
                                                 <input type="hidden" name="eliminar" value="1">
                                                 <input type="hidden" name="user_id" value="<?php echo $arrendatario['id']; ?>">
-                                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete(<?php echo $arrendatario['id']; ?>)">Eliminar</button>
+                                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete(<?php echo $arrendatario['id']; ?>)">
+                                                    <i class="fa-solid fa-trash-can"></i>
+                                                </button>
                                             </form>
                                         </td>
                                     </tr>
@@ -309,7 +320,7 @@ try {
                                                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <form method="POST" action="arrendatarios.php">
+                                                    <form method="POST" action="dashboardPropietario.php?page=arrendatarios">
                                                         <input type="hidden" name="editar" value="1">
                                                         <input type="hidden" name="user_id" value="<?php echo $arrendatario['id']; ?>">
                                                         <!-- Nombre -->
@@ -350,82 +361,81 @@ try {
     </div>
 </div>
 
+
 <!-- Mostrar SweetAlert si hay éxito o error -->
 <?php if (!empty($success)): ?>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    Swal.fire({
-        icon: 'success',
-        title: '¡Éxito!',
-        text: '<?php echo $success; ?>',
-    });
-</script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: '<?php echo $success; ?>',
+        });
+    </script>
 <?php elseif (!empty($error)): ?>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: '<?php echo $error; ?>',
-    });
-</script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: '<?php echo $error; ?>',
+        });
+    </script>
 <?php endif; ?>
 
 <!-- Script para confirmación de eliminación con SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-function confirmDelete(id) {
-    Swal.fire({
-        title: '¿Estás seguro?',
-        text: 'Esta acción eliminará al arrendatario permanentemente.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Confirmar',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            document.getElementById('deleteForm' + id).submit();
+    function confirmDelete(id) {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: 'Esta acción eliminará al arrendatario permanentemente.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Confirmar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('deleteForm' + id).submit();
+            }
+        });
+    }
+
+    // Autocompletar campos al seleccionar postulación
+    document.getElementById('postulacion_id').addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        if (selectedOption.value) {
+            const [nombre, correo] = selectedOption.text.split(' - ');
+            const telefono = selectedOption.getAttribute('data-telefono') || '';
+            document.getElementById('nombre').value = nombre;
+            document.getElementById('correo').value = correo;
+            document.getElementById('telefono').value = telefono;
+        } else {
+            document.getElementById('nombre').value = '';
+            document.getElementById('correo').value = '';
+            document.getElementById('telefono').value = '';
         }
     });
-}
 
-// Autocompletar campos al seleccionar postulación
-document.getElementById('postulacion_id').addEventListener('change', function() {
-    const selectedOption = this.options[this.selectedIndex];
-    if (selectedOption.value) {
-        const [nombre, correo] = selectedOption.text.split(' - ');
-        const telefono = selectedOption.getAttribute('data-telefono') || '';
-        document.getElementById('nombre').value = nombre;
-        document.getElementById('correo').value = correo;
-        document.getElementById('telefono').value = telefono;
-    } else {
-        document.getElementById('nombre').value = '';
-        document.getElementById('correo').value = '';
-        document.getElementById('telefono').value = '';
-    }
-});
-
-// Prellenar al cargar si hay una postulación seleccionada desde la URL
-window.addEventListener('load', function() {
-    const select = document.getElementById('postulacion_id');
-    const urlParams = new URLSearchParams(window.location.search);
-    const postulacionId = urlParams.get('postulacion_id');
-    if (postulacionId) {
-        for (let option of select.options) {
-            if (option.value == postulacionId) {
-                option.selected = true;
-                const [nombre, correo] = option.text.split(' - ');
-                const telefono = option.getAttribute('data-telefono') || '';
-                document.getElementById('nombre').value = nombre;
-                document.getElementById('correo').value = correo;
-                document.getElementById('telefono').value = telefono;
-                break;
+    // Prellenar al cargar si hay una postulación seleccionada desde la URL
+    window.addEventListener('load', function() {
+        const select = document.getElementById('postulacion_id');
+        const urlParams = new URLSearchParams(window.location.search);
+        const postulacionId = urlParams.get('postulacion_id');
+        if (postulacionId) {
+            for (let option of select.options) {
+                if (option.value == postulacionId) {
+                    option.selected = true;
+                    const [nombre, correo] = option.text.split(' - ');
+                    const telefono = option.getAttribute('data-telefono') || '';
+                    document.getElementById('nombre').value = nombre;
+                    document.getElementById('correo').value = correo;
+                    document.getElementById('telefono').value = telefono;
+                    break;
+                }
             }
         }
-    }
-});
+    });
 </script>
-
-<?php require '../../layouts/container/propietario/footerPropietario.php'; ?>

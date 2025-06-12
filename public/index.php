@@ -13,12 +13,44 @@ include '../src/views/layouts/Main/headerIndex.php';
                 <form action="../src/views/container/visitante/filtro.php" method="GET" class="w-100">
                     <div class="d-flex gap-2">
                         <select name="zona" class="form-control zona-busqueda" required>
-                            <option value="">Selecciona una zona</option>
-                            <option value="Norte">Norte</option>
-                            <option value="Centro">Centro</option>
-                            <option value="Sur">Sur</option>
-                            <option value="Este">Este</option>
-                            <option value="Oeste">Oeste</option>
+                            <option disabled selected>Selecciona un Municipio</option>
+                            <option value="Acevedo">Acevedo</option>
+                            <option value="Agrado">Agrado</option>
+                            <option value="Aipe">Aipe</option>
+                            <option value="Algeciras">Algeciras</option>
+                            <option value="Altamira">Altamira</option>
+                            <option value="Baraya">Baraya</option>
+                            <option value="Campoalegre">Campoalegre</option>
+                            <option value="Colombia">Colombia</option>
+                            <option value="Elías">Elías</option>
+                            <option value="Garzón">Garzón</option>
+                            <option value="Gigante">Gigante</option>
+                            <option value="Guadalupe">Guadalupe</option>
+                            <option value="Hobo">Hobo</option>
+                            <option value="Íquira">Íquira</option>
+                            <option value="Isnos">Isnos</option>
+                            <option value="LaArgentina">La Argentina</option>
+                            <option value="LaPlata">La Plata</option>
+                            <option value="Nátaga">Nátaga</option>
+                            <option value="Neiva">Neiva (capital)</option>
+                            <option value="Oporapa">Oporapa</option>
+                            <option value="Paicol">Paicol</option>
+                            <option value="Palermo">Palermo</option>
+                            <option value="Palestina">Palestina</option>
+                            <option value="Pital">Pital</option>
+                            <option value="Pitalito">Pitalito</option>
+                            <option value="Rivera">Rivera</option>
+                            <option value="Saladoblanco">Saladoblanco</option>
+                            <option value="SanAgustín">San Agustín</option>
+                            <option value="SantaMaría">Santa María</option>
+                            <option value="Suaza">Suaza</option>
+                            <option value="Tarqui">Tarqui</option>
+                            <option value="Tello">Tello</option>
+                            <option value="Teruel">Teruel</option>
+                            <option value="Tesalia">Tesalia</option>
+                            <option value="Timaná">Timaná</option>
+                            <option value="Villavieja">Villavieja</option>
+                            <option value="Yaguará">Yaguará</option>
                         </select>
                         <button type="submit" class="btn btn-dark">Buscar</button>
                     </div>

@@ -1,6 +1,8 @@
 <?php
 // Iniciar la sesión
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Verificar si el usuario está logueado y es propietario
 if (!isset($_SESSION['user_id']) || $_SESSION['rol'] !== 'propietario') {
@@ -30,8 +32,7 @@ $pagos = [];
 $estados_pagos = [];
 try {
     // Contratos activos del propietario
-    $stmt = $pdo->prepare("
-        SELECT c.id AS contrato_id, c.id_arrendatario, p.id AS propiedad_id, p.direccion, p.precio, u.nombre AS arrendatario_nombre
+    $stmt = $pdo->prepare("SELECT c.id AS contrato_id, c.id_arrendatario, p.id AS propiedad_id, p.direccion, p.precio, u.nombre AS arrendatario_nombre
         FROM contratos c
         JOIN propiedades p ON c.id_propiedad = p.id
         JOIN arrendatarios a ON c.id_arrendatario = a.id
@@ -42,8 +43,7 @@ try {
     $contratos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Pagos realizados
-    $stmt = $pdo->prepare("
-        SELECT p.id AS pago_id, p.id_contrato, p.monto, p.fecha_pago, p.estado, u.nombre AS arrendatario_nombre, pr.direccion
+    $stmt = $pdo->prepare("SELECT p.id AS pago_id, p.id_contrato, p.monto, p.fecha_pago, p.estado, u.nombre AS arrendatario_nombre, pr.direccion
         FROM pagos p
         JOIN contratos c ON p.id_contrato = c.id
         JOIN propiedades pr ON c.id_propiedad = pr.id
@@ -59,8 +59,7 @@ try {
     $currentMonth = date('Y-m'); // Mayo 2025
     foreach ($contratos as $contrato) {
         // Verificar si ya existe un registro en estado_pagos para este contrato y mes
-        $stmt = $pdo->prepare("
-            SELECT id, monto_pagado, estado
+        $stmt = $pdo->prepare("SELECT id, monto_pagado, estado
             FROM estado_pagos
             WHERE id_contrato = :id_contrato AND periodo = :periodo
         ");
@@ -86,8 +85,7 @@ try {
 
         if ($estado_pago) {
             // Actualizar registro existente
-            $stmt = $pdo->prepare("
-                UPDATE estado_pagos
+            $stmt = $pdo->prepare("UPDATE estado_pagos
                 SET monto_pagado = :monto_pagado, estado = :estado, updated_at = NOW()
                 WHERE id = :id
             ");
@@ -98,8 +96,7 @@ try {
             ]);
         } else {
             // Crear nuevo registro
-            $stmt = $pdo->prepare("
-                INSERT INTO estado_pagos (id_contrato, id_arrendatario, id_propiedad, periodo, monto_esperado, monto_pagado, estado, created_at, updated_at)
+            $stmt = $pdo->prepare("INSERT INTO estado_pagos (id_contrato, id_arrendatario, id_propiedad, periodo, monto_esperado, monto_pagado, estado, created_at, updated_at)
                 VALUES (:id_contrato, :id_arrendatario, :id_propiedad, :periodo, :monto_esperado, :monto_pagado, :estado, NOW(), NOW())
             ");
             $stmt->execute([
@@ -115,8 +112,7 @@ try {
     }
 
     // Obtener estados de pago para el mes actual
-    $stmt = $pdo->prepare("
-        SELECT ep.id_contrato, ep.monto_esperado, ep.monto_pagado, ep.estado, u.nombre AS arrendatario_nombre, p.direccion
+    $stmt = $pdo->prepare("SELECT ep.id_contrato, ep.monto_esperado, ep.monto_pagado, ep.estado, u.nombre AS arrendatario_nombre, p.direccion
         FROM estado_pagos ep
         JOIN contratos c ON ep.id_contrato = c.id
         JOIN propiedades p ON c.id_propiedad = p.id
@@ -131,7 +127,6 @@ try {
 }
 ?>
 
-<?php include '../../layouts/container/propietario/headerPropietario.php'; ?>
 
 <div class="container mt-5">
     <div class="card" style="background-color: #2c2c2c; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
@@ -207,5 +202,3 @@ try {
         </div>
     </div>
 </div>
-
-<?php include '../../layouts/container/propietario/footerPropietario.php'; ?>

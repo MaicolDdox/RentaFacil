@@ -24,14 +24,17 @@ CREATE TABLE IF NOT EXISTS `arrendatarios` (
   `id` int NOT NULL AUTO_INCREMENT,
   `id_usuario` int DEFAULT NULL,
   `id_propiedad` int DEFAULT NULL,
+  `id_propietario` int NOT NULL,
   PRIMARY KEY (`id`),
   KEY `id_usuario` (`id_usuario`),
   KEY `arrendatarios_ibfk_2` (`id_propiedad`),
+  KEY `arrendatarios_ibfk_3` (`id_propietario`),
   CONSTRAINT `arrendatarios_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`),
-  CONSTRAINT `arrendatarios_ibfk_2` FOREIGN KEY (`id_propiedad`) REFERENCES `propiedades` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  CONSTRAINT `arrendatarios_ibfk_2` FOREIGN KEY (`id_propiedad`) REFERENCES `propiedades` (`id`),
+  CONSTRAINT `arrendatarios_ibfk_3` FOREIGN KEY (`id_propietario`) REFERENCES `propietarios` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla rentafacil.arrendatarios: ~2 rows (aproximadamente)
 
 -- Volcando estructura para tabla rentafacil.contratos
 CREATE TABLE IF NOT EXISTS `contratos` (
@@ -49,9 +52,9 @@ CREATE TABLE IF NOT EXISTS `contratos` (
   KEY `id_arrendatario` (`id_arrendatario`),
   CONSTRAINT `contratos_ibfk_1` FOREIGN KEY (`id_propiedad`) REFERENCES `propiedades` (`id`),
   CONSTRAINT `contratos_ibfk_2` FOREIGN KEY (`id_arrendatario`) REFERENCES `arrendatarios` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla rentafacil.contratos: ~2 rows (aproximadamente)
 
 -- Volcando estructura para tabla rentafacil.estado_pagos
 CREATE TABLE IF NOT EXISTS `estado_pagos` (
@@ -73,9 +76,9 @@ CREATE TABLE IF NOT EXISTS `estado_pagos` (
   CONSTRAINT `estado_pagos_ibfk_1` FOREIGN KEY (`id_contrato`) REFERENCES `contratos` (`id`),
   CONSTRAINT `estado_pagos_ibfk_2` FOREIGN KEY (`id_arrendatario`) REFERENCES `arrendatarios` (`id`),
   CONSTRAINT `estado_pagos_ibfk_3` FOREIGN KEY (`id_propiedad`) REFERENCES `propiedades` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla rentafacil.estado_pagos: ~5 rows (aproximadamente)
 
 -- Volcando estructura para tabla rentafacil.eventos
 CREATE TABLE IF NOT EXISTS `eventos` (
@@ -91,7 +94,7 @@ CREATE TABLE IF NOT EXISTS `eventos` (
   CONSTRAINT `eventos_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla rentafacil.eventos: ~0 rows (aproximadamente)
 
 -- Volcando estructura para tabla rentafacil.imagenes_propiedad
 CREATE TABLE IF NOT EXISTS `imagenes_propiedad` (
@@ -103,41 +106,9 @@ CREATE TABLE IF NOT EXISTS `imagenes_propiedad` (
   PRIMARY KEY (`id`),
   KEY `id_propiedad` (`id_propiedad`),
   CONSTRAINT `imagenes_propiedad_ibfk_1` FOREIGN KEY (`id_propiedad`) REFERENCES `propiedades` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- La exportación de datos fue deseleccionada.
-
--- Volcando estructura para tabla rentafacil.notificaciones
-CREATE TABLE IF NOT EXISTS `notificaciones` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `id_usuario` int DEFAULT NULL,
-  `mensaje` text COLLATE utf8mb4_general_ci,
-  `tipo` enum('Info','Alerta','Recordatorio') COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `leido` tinyint(1) DEFAULT NULL,
-  `fecha_envio` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `id_usuario` (`id_usuario`),
-  CONSTRAINT `notificaciones_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- La exportación de datos fue deseleccionada.
-
--- Volcando estructura para tabla rentafacil.pagos
-CREATE TABLE IF NOT EXISTS `pagos` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `id_contrato` int DEFAULT NULL,
-  `fecha_pago` date DEFAULT NULL,
-  `periodo` varchar(7) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `monto` decimal(10,2) DEFAULT NULL,
-  `estado` enum('Pendiente','Pagado','Retrasado') COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `created_at` datetime DEFAULT NULL,
-  `updated_at` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `id_contrato` (`id_contrato`),
-  CONSTRAINT `pagos_ibfk_1` FOREIGN KEY (`id_contrato`) REFERENCES `contratos` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla rentafacil.imagenes_propiedad: ~9 rows (aproximadamente)
 
 -- Volcando estructura para tabla rentafacil.password_resets
 CREATE TABLE IF NOT EXISTS `password_resets` (
@@ -149,9 +120,9 @@ CREATE TABLE IF NOT EXISTS `password_resets` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `correo` (`correo`),
   KEY `token` (`token`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla rentafacil.password_resets: ~2 rows (aproximadamente)
 
 -- Volcando estructura para tabla rentafacil.postulaciones
 CREATE TABLE IF NOT EXISTS `postulaciones` (
@@ -165,16 +136,15 @@ CREATE TABLE IF NOT EXISTS `postulaciones` (
   UNIQUE KEY `correo` (`correo`),
   KEY `id_propiedad` (`id_propiedad`),
   CONSTRAINT `postulaciones_ibfk_1` FOREIGN KEY (`id_propiedad`) REFERENCES `propiedades` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla rentafacil.postulaciones: ~0 rows (aproximadamente)
 
 -- Volcando estructura para tabla rentafacil.propiedades
 CREATE TABLE IF NOT EXISTS `propiedades` (
   `id` int NOT NULL AUTO_INCREMENT,
   `id_propietario` int DEFAULT NULL,
   `direccion` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `tipo` enum('Apartamento','Casa','Local','Otro') COLLATE utf8mb4_general_ci DEFAULT NULL,
   `estado` enum('Disponible','Ocupado','Inactivo') COLLATE utf8mb4_general_ci DEFAULT NULL,
   `precio` decimal(10,2) DEFAULT NULL,
   `descripcion` text COLLATE utf8mb4_general_ci,
@@ -184,9 +154,9 @@ CREATE TABLE IF NOT EXISTS `propiedades` (
   PRIMARY KEY (`id`),
   KEY `id_propietario` (`id_propietario`),
   CONSTRAINT `propiedades_ibfk_1` FOREIGN KEY (`id_propietario`) REFERENCES `propietarios` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla rentafacil.propiedades: ~7 rows (aproximadamente)
 
 -- Volcando estructura para tabla rentafacil.propietarios
 CREATE TABLE IF NOT EXISTS `propietarios` (
@@ -195,23 +165,9 @@ CREATE TABLE IF NOT EXISTS `propietarios` (
   PRIMARY KEY (`id`),
   KEY `id_usuario` (`id_usuario`),
   CONSTRAINT `propietarios_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- La exportación de datos fue deseleccionada.
-
--- Volcando estructura para tabla rentafacil.reportes
-CREATE TABLE IF NOT EXISTS `reportes` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `id_propietario` int DEFAULT NULL,
-  `fecha_generacion` datetime DEFAULT NULL,
-  `tipo` enum('Pagos','Contratos','Resumen Mensual') COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `contenido` text COLLATE utf8mb4_general_ci,
-  PRIMARY KEY (`id`),
-  KEY `id_propietario` (`id_propietario`),
-  CONSTRAINT `reportes_ibfk_1` FOREIGN KEY (`id_propietario`) REFERENCES `propietarios` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla rentafacil.propietarios: ~4 rows (aproximadamente)
 
 -- Volcando estructura para tabla rentafacil.usuarios
 CREATE TABLE IF NOT EXISTS `usuarios` (
@@ -226,9 +182,9 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   `is_verified` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `correo` (`correo`)
-) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla rentafacil.usuarios: ~8 rows (aproximadamente)
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

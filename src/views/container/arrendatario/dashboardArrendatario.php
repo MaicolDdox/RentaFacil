@@ -1,6 +1,7 @@
 <?php
 // Iniciar la sesión
 session_start();
+require '../../../config/config.php';
 
 // Verificar si el usuario ha iniciado sesión y es arrendatario
 if (!isset($_SESSION['user_id']) || $_SESSION['rol'] !== 'arrendatario') {
@@ -9,26 +10,47 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] !== 'arrendatario') {
 }
 
 // Obtener el nombre del usuario
-$nombre = isset($_SESSION['nombre']) ? htmlspecialchars($_SESSION['nombre']) : 'Arrendatario';
+$nombre_usuario = $_SESSION['nombre'];
+$rol_usuario = $_SESSION['rol'];
+
+// Determinar contenido según la página seleccionada
+$pagina = isset($_GET['page']) ? $_GET['page'] : 'inicio';
+
+switch ($pagina) {
+    case 'contratos':
+        $contenido = 'contratos.php';
+        break;
+    case 'calendario':
+        $contenido = 'calendario.php';
+        break;
+    case 'pagos':
+        $contenido = 'pagos.php';
+        break;
+    case 'configuraciones':
+        $contenido = 'configDatos.php';
+        break;
+
+    default:
+        $contenido = 'main.php';
+        break;
+}
+
+
+//consultar si el usuario tiene un codigo de verificacion
+$stm = $pdo->prepare("SELECT verification_code FROM usuarios WHERE id = :id");
+$stm->execute(['id' => $_SESSION['user_id']]);
+$usuario = $stm->fetch(PDO::FETCH_ASSOC);
 ?>
+<?php include '../../layouts/container/Arrendatario_Propietario/header.php'; ?>
 
-<?php include '../../layouts/container/arrendatario/headerArrendatario.php'; ?>
-
-<main>
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-12 text-center">
-                <h1>Bienvenid@, <?php echo $nombre; ?>!</h1>
-                <p>Aquí puedes gestionar tus contratos y postulaciones.</p>
-            </div>
-        </div>
-        <!-- Placeholder para futuras funcionalidades -->
-        <div class="card" style="background-color: #2c2c2c; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
-            <div class="card-body text-white text-center">
-                <p>Funcionalidades para arrendatarios en desarrollo.</p>
-            </div>
-        </div>
+<nav class="nav flex-column">
+    <a href="?page=contratos" class="nav-link"><i class="fas fa-file-contract"></i> Contratos</a>
+    <a href="?page=calendario" class="nav-link"><i class="fas fa-calendar"></i> Calendario</a>
+    <a href="?page=pagos" class="nav-link"><i class="fas fa-money-bill"></i> Pagos</a>
+    <div class="mt-auto">
+        <a href="../../auth/logout.php" class="nav-link" style="color: #dc3545;"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+        <a href="?page=configuraciones" class="nav-link text-primary"><i class="fas fa-cog"></i> Configuraciones</a>
     </div>
-</main>
+</nav>
 
-<?php include '../../layouts/container/arrendatario/footerArrendatario.php'; ?>
+<?php include '../../layouts/container/Arrendatario_Propietario/footer.php'; ?>

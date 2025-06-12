@@ -9,17 +9,17 @@ $success = '';
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $correo = trim($_POST['correo'] ?? '');
+    $correo_usuario = trim($_POST['correo'] ?? '');
     $contrasena = trim($_POST['contrasena'] ?? '');
 
     // Validar que los campos no estén vacíos
-    if (empty($correo) || empty($contrasena)) {
+    if (empty($correo_usuario) || empty($contrasena)) {
         $error = "Por favor, completa todos los campos.";
     } else {
         try {
-            // Consultar el usuario en la base de datos
-            $stmt = $pdo->prepare("SELECT id, nombre, contrasena, is_verified FROM usuarios WHERE correo = :correo");
-            $stmt->execute(['correo' => $correo]);
+            // Consultar el usuario solo por correo
+            $stmt = $pdo->prepare("SELECT id, nombre, correo, contrasena, is_verified FROM usuarios WHERE correo = :correo");
+            $stmt->execute(['correo' => $correo_usuario]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($user && password_verify($contrasena, $user['contrasena']) && $user['is_verified'] == 1) {
@@ -73,13 +73,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <form method="POST" action="login.php">
     <!-- Correo -->
     <div class="mb-3">
-        <label for="correo" class="form-label"style="color: white;" >Correo Electrónico</label>
+        <label for="correo" class="form-label" style="color: white;">Correo Electrónico</label>
         <input type="email" id="correo" name="correo" class="form-control" required>
     </div>
 
     <!-- Contraseña -->
     <div class="mb-3">
-        <label for="contrasena" class="form-label"style="color: white;" >Contraseña</label>
+        <label for="contrasena" class="form-label" style="color: white;">Contraseña</label>
         <input type="password" id="contrasena" name="contrasena" class="form-control" required>
     </div>
 
@@ -93,8 +93,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <!-- Botón de registrarse -->
     <a href="./register.php" class="btn btn-danger w-100">Registrarse</a>
-
-
 
     <!-- Mostrar SweetAlert si hay éxito o error -->
     <?php if (!empty($success)): ?>
@@ -117,4 +115,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </script>
     <?php endif; ?>
 
-    <?php include '../layouts/Auth/footerAuth.php'; ?>
+<?php include '../layouts/Auth/footerAuth.php'; ?>

@@ -1,6 +1,8 @@
 <?php
 // Iniciar la sesión
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Verificar si el usuario está logueado y es propietario
 if (!isset($_SESSION['user_id']) || $_SESSION['rol'] !== 'propietario') {
@@ -31,43 +33,55 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['actualizar'])) {
     $nombre = $_POST['nombre'];
     $correo = $_POST['correo'];
     $telefono = $_POST['telefono'];
-    $contrasena = !empty($_POST['contrasena']) ? password_hash($_POST['contrasena'], PASSWORD_DEFAULT) : $propietario['contrasena'];
+    $contrasena = $_POST['contrasena'];
+    $contrasena2 = $_POST['contrasena2'];
 
-    try {
-        $pdo->beginTransaction();
-
-        // Verificar si el correo ya existe (excluyendo el propio usuario)
-        $stmt = $pdo->prepare("SELECT id FROM usuarios WHERE correo = :correo AND id != :id");
-        $stmt->execute(['correo' => $correo, 'id' => $propietario['id']]);
-        if ($stmt->fetchColumn() && $correo !== $propietario['correo']) {
-            $error = "El correo ya está en uso.";
-        } else {
-            // Actualizar datos, incluyendo el correo sin verificación
-            $stmt = $pdo->prepare("UPDATE usuarios SET nombre = :nombre, correo = :correo, telefono = :telefono, contrasena = :contrasena WHERE id = :id");
-            $stmt->execute([
-                'nombre' => $nombre,
-                'correo' => $correo,
-                'telefono' => $telefono,
-                'contrasena' => $contrasena,
-                'id' => $propietario['id']
-            ]);
-
-            // Actualizar las variables de sesión
-            $_SESSION['nombre'] = $nombre;
-            $_SESSION['correo'] = $correo;
-
-            $pdo->commit();
-            $success = "Datos actualizados correctamente, incluido el correo.";
+    // Validar confirmación de contraseña solo si se intenta cambiar
+    if (!empty($contrasena) || !empty($contrasena2)) {
+        if ($contrasena !== $contrasena2) {
+            $error = "Las contraseñas no coinciden.";
+        } elseif (strlen($contrasena) < 6) {
+            $error = "La contraseña debe tener al menos 6 caracteres.";
         }
-    } catch (PDOException $e) {
-        $pdo->rollBack();
-        $error = "Error al actualizar los datos: " . $e->getMessage();
+    }
+
+    if (empty($error)) {
+        $contrasena_hash = !empty($contrasena) ? password_hash($contrasena, PASSWORD_DEFAULT) : $propietario['contrasena'];
+        try {
+            $pdo->beginTransaction();
+
+            // Verificar si el correo ya existe (excluyendo el propio usuario)
+            $stmt = $pdo->prepare("SELECT id FROM usuarios WHERE correo = :correo AND id != :id");
+            $stmt->execute(['correo' => $correo, 'id' => $propietario['id']]);
+            if ($stmt->fetchColumn() && $correo !== $propietario['correo']) {
+                $error = "El correo ya está en uso.";
+            } else {
+                // Actualizar datos
+                $stmt = $pdo->prepare("UPDATE usuarios SET nombre = :nombre, correo = :correo, telefono = :telefono, contrasena = :contrasena WHERE id = :id");
+                $stmt->execute([
+                    'nombre' => $nombre,
+                    'correo' => $correo,
+                    'telefono' => $telefono,
+                    'contrasena' => $contrasena_hash,
+                    'id' => $propietario['id']
+                ]);
+
+                // Actualizar las variables de sesión
+                $_SESSION['nombre'] = $nombre;
+                $_SESSION['correo'] = $correo;
+
+                $pdo->commit();
+                $success = "Datos actualizados correctamente.";
+            }
+        } catch (PDOException $e) {
+            $pdo->rollBack();
+            $error = "Error al actualizar los datos: " . $e->getMessage();
+        }
     }
 }
 ?>
 
-<?php include '../../layouts/container/propietario/headerPropietario.php'; ?>
-
+    
 <div class="container mt-5">
     <div class="card" style="background-color: #2c2c2c; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
         <div class="card-body text-white">
@@ -78,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['actualizar'])) {
                 <div class="alert alert-success" role="alert"><?php echo $success; ?></div>
             <?php endif; ?>
 
-            <form method="POST" action="configDatosPropietario.php">
+            <form method="POST" action="dashboardPropietario.php?page=configuraciones">
                 <input type="hidden" name="actualizar" value="1">
                 <div class="mb-3">
                     <label for="nombre" class="form-label">Nombre</label>
@@ -96,10 +110,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['actualizar'])) {
                     <label for="contrasena" class="form-label">Contraseña (dejar en blanco para no cambiar)</label>
                     <input type="password" class="form-control" id="contrasena" name="contrasena">
                 </div>
+                <div class="mb-3">
+                    <label for="contrasena2" class="form-label">Confirmar Contraseña (dejar en blanco para no cambiar)</label>
+                    <input type="password" class="form-control" id="contrasena2" name="contrasena2">
+                </div>
                 <button type="submit" class="btn btn-primary w-100">Actualizar</button>
             </form>
         </div>
     </div>
 </div>
-
-<?php include '../../layouts/container/propietario/footerPropietario.php'; ?>

@@ -1,6 +1,8 @@
 <?php
 // Iniciar la sesión
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Verificar si el usuario está logueado y es propietario
 if (!isset($_SESSION['user_id']) || $_SESSION['rol'] !== 'propietario') {
@@ -62,11 +64,20 @@ try {
 }
 ?>
 
-<?php include '../../layouts/container/propietario/headerPropietario.php'; ?>
+<div class="row">
+    <div class="col-12">
+        <div class="card" style="background-color: #2c2c2c; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); margin:30px;">
+            <div class="card-body text-white">
+                <h2 class="text-center mb-4">POSTULACIONES</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <section class="hero-banner d-flex align-items-center text-center">
     <div class="container text-white">
-        <h2 class="mb-4">Historial de Postulaciones</h2>
+
         <?php if (!empty($error)): ?>
             <div class="alert alert-danger" role="alert"><?php echo $error; ?></div>
         <?php elseif (!empty($success)): ?>
@@ -100,12 +111,16 @@ try {
                                         <td><?php echo htmlspecialchars($postulacion['telefono_postulante']); ?></td>
                                         <td><?php echo htmlspecialchars($postulacion['fecha_postulacion']); ?></td>
                                         <td>
-                                            <form method="POST" action="postulaciones.php" style="display:inline;" id="cancelForm<?php echo $postulacion['id']; ?>">
+                                            <form method="POST" action="dashboardPropietario.php?page=postulaciones" style="display:inline;" id="cancelForm<?php echo $postulacion['id']; ?>">
                                                 <input type="hidden" name="cancelar" value="1">
                                                 <input type="hidden" name="postulacion_id" value="<?php echo $postulacion['id']; ?>">
-                                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmCancel(<?php echo $postulacion['id']; ?>)">Cancelar</button>
+                                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmCancel(<?php echo $postulacion['id']; ?>)">
+                                                    <i class="fa-solid fa-user-xmark"></i>
+                                                </button>
                                             </form>
-                                            <a href="arrendatarios.php?postulacion_id=<?php echo $postulacion['id']; ?>" class="btn btn-success btn-sm">Convertir en Arrendatario</a>
+                                            <a href="dashboardPropietario.php?page=arrendatarios&postulacion_id=<?php echo $postulacion['id']; ?>" class="btn btn-success btn-sm">
+                                                <i class="fa-solid fa-user-check"></i>
+                                            </a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -127,22 +142,20 @@ try {
 <!-- Script para confirmación de cancelación con SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-function confirmCancel(id) {
-    Swal.fire({
-        title: '¿Estás seguro?',
-        text: '¿Deseas cancelar esta postulación?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#dc3545',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Confirmar',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            document.getElementById('cancelForm' + id).submit();
-        }
-    });
-}
+    function confirmCancel(id) {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: '¿Deseas cancelar esta postulación?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Confirmar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('cancelForm' + id).submit();
+            }
+        });
+    }
 </script>
-
-<?php include '../../layouts/container/propietario/footerPropietario.php'; ?>
