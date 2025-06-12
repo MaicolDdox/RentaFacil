@@ -68,20 +68,25 @@ try {
     <div class="col-12">
         <div class="card" style="background-color: #2c2c2c; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); margin:30px;">
             <div class="card-body text-white">
-                <h2 class="text-center mb-4">POSTULACIONES</h2>
+                <h2 class="text-center mb-4">
+                    <i class="fa-solid fa-file-signature me-2"></i>POSTULACIONES
+                </h2>
             </div>
         </div>
     </div>
 </div>
 
-
 <section class="hero-banner d-flex align-items-center text-center">
     <div class="container text-white">
 
         <?php if (!empty($error)): ?>
-            <div class="alert alert-danger" role="alert"><?php echo $error; ?></div>
+            <div class="alert alert-danger" role="alert">
+                <i class="fa-solid fa-circle-exclamation me-2"></i><?php echo $error; ?>
+            </div>
         <?php elseif (!empty($success)): ?>
-            <div class="alert alert-success" role="alert"><?php echo $success; ?></div>
+            <div class="alert alert-success" role="alert">
+                <i class="fa-solid fa-circle-check me-2"></i><?php echo $success; ?>
+            </div>
         <?php endif; ?>
 
         <!-- Lista de postulaciones -->
@@ -92,13 +97,13 @@ try {
                         <table class="table table-dark table-striped">
                             <thead>
                                 <tr>
-                                    <th>Número</th>
-                                    <th>Propiedad</th>
-                                    <th>Nombre</th>
-                                    <th>Correo</th>
-                                    <th>Teléfono</th>
-                                    <th>Fecha de Postulación</th>
-                                    <th>Acciones</th>
+                                    <th><i class="fa-solid fa-hashtag"></i> Número</th>
+                                    <th><i class="fa-solid fa-location-dot"></i> Propiedad</th>
+                                    <th><i class="fa-solid fa-user"></i> Nombre</th>
+                                    <th><i class="fa-solid fa-envelope"></i> Correo</th>
+                                    <th><i class="fa-solid fa-phone"></i> Teléfono</th>
+                                    <th><i class="fa-solid fa-calendar-days"></i> Fecha de Postulación</th>
+                                    <th><i class="fa-solid fa-gears"></i> Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -109,8 +114,12 @@ try {
                                         <td><?php echo htmlspecialchars($postulacion['nombre_postulante']); ?></td>
                                         <td><?php echo htmlspecialchars($postulacion['correo']); ?></td>
                                         <td><?php echo htmlspecialchars($postulacion['telefono_postulante']); ?></td>
-                                        <td><?php echo htmlspecialchars($postulacion['fecha_postulacion']); ?></td>
                                         <td>
+                                            <i class="fa-regular fa-clock me-1"></i>
+                                            <?php echo htmlspecialchars($postulacion['fecha_postulacion']); ?>
+                                        </td>
+                                        <td>
+                                            <!-- Botón cancelar -->
                                             <form method="POST" action="dashboardPropietario.php?page=postulaciones" style="display:inline;" id="cancelForm<?php echo $postulacion['id']; ?>">
                                                 <input type="hidden" name="cancelar" value="1">
                                                 <input type="hidden" name="postulacion_id" value="<?php echo $postulacion['id']; ?>">
@@ -118,7 +127,8 @@ try {
                                                     <i class="fa-solid fa-user-xmark"></i>
                                                 </button>
                                             </form>
-                                            <a href="dashboardPropietario.php?page=arrendatarios&postulacion_id=<?php echo $postulacion['id']; ?>" class="btn btn-success btn-sm">
+                                            <!-- Botón convertir en arrendatario -->
+                                            <a href="dashboardPropietario.php?page=arrendatarios&postulacion_id=<?php echo $postulacion['id']; ?>" class="btn btn-success btn-sm" title="Crear arrendatario">
                                                 <i class="fa-solid fa-user-check"></i>
                                             </a>
                                         </td>
@@ -130,7 +140,9 @@ try {
                 <?php else: ?>
                     <div class="card bg-dark text-white" style="border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
                         <div class="card-body">
-                            <p class="text-center">No tienes postulaciones registradas.</p>
+                            <p class="text-center">
+                                <i class="fa-solid fa-circle-info me-2"></i>No tienes postulaciones registradas.
+                            </p>
                         </div>
                     </div>
                 <?php endif; ?>

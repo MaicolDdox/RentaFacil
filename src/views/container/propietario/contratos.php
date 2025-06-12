@@ -157,23 +157,61 @@ try {
 }
 ?>
 
+<!-- Encabezado de la sección de contratos, manteniendo el estilo -->
+<div class="row">
+    <div class="col-12">
+        <div class="card" style="background-color: #2c2c2c; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+            <div class="card-body text-white">
+                <h2 class="text-center mb-4">
+                    <i class="fas fa-file-contract me-2"></i>Contratos
+                </h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Botones de acciones superiores -->
 <div class="container mt-5">
-    <!-- Formulario para crear contrato -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card" style="background-color: #2c2c2c; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
-                <div class="card-body text-white">
-                    <h2 class="text-center mb-4">Crear Contrato</h2>
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-end gap-3">
+            <!-- Descargar PDF -->
+            <button class="btn btn-outline-danger" style="border-radius: 10px;" disabled>
+                <i class="fas fa-file-pdf fa-lg me-2"></i> Descargar PDF
+            </button>
+            <!-- Importar -->
+            <button class="btn btn-outline-success" style="border-radius: 10px;" disabled>
+                <i class="fas fa-file-import fa-lg me-2"></i> Importar
+            </button>
+            <!-- Abrir modal de crear contrato -->
+            <button class="btn btn-primary" style="border-radius: 10px;" data-bs-toggle="modal" data-bs-target="#crearContratoModal">
+                <i class="fas fa-file-signature fa-lg me-2"></i> Crear Contrato
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal para crear contrato -->
+    <div class="modal fade" id="crearContratoModal" tabindex="-1" aria-labelledby="crearContratoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" style="background-color: #2c2c2c; border-radius: 15px;">
+                <div class="modal-header border-0">
+                    <h2 class="modal-title text-white w-100 text-center" id="crearContratoModalLabel">
+                        <i class="fas fa-file-signature me-2"></i>Crear Contrato
+                    </h2>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body text-white">
                     <?php if (!empty($error)): ?>
                         <div class="alert alert-danger" role="alert"><?php echo $error; ?></div>
                     <?php elseif (!empty($success)): ?>
                         <div class="alert alert-success" role="alert"><?php echo $success; ?></div>
                     <?php endif; ?>
 
-                    <form method="POST" action="dashboardPropietario.php?page=contratos">
+                    <form method="POST" action="dashboardPropietario.php?page=contratos" id="formCrearContrato">
                         <input type="hidden" name="crear_contrato" value="1">
                         <div class="mb-3">
-                            <label for="id_arrendatario" class="form-label">Arrendatario</label>
+                            <label for="id_arrendatario" class="form-label">
+                                <i class="fas fa-user"></i> Arrendatario
+                            </label>
                             <select class="form-control" id="id_arrendatario" name="id_arrendatario" required>
                                 <option value="">Selecciona un arrendatario</option>
                                 <?php foreach ($arrendatarios as $arrendatario): ?>
@@ -184,7 +222,9 @@ try {
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="id_propiedad" class="form-label">Propiedad</label>
+                            <label for="id_propiedad" class="form-label">
+                                <i class="fas fa-home"></i> Propiedad
+                            </label>
                             <select class="form-control" id="id_propiedad" name="id_propiedad" required>
                                 <option value="">Selecciona una propiedad</option>
                                 <?php foreach ($propiedades as $propiedad): ?>
@@ -193,14 +233,20 @@ try {
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="fecha_inicio" class="form-label">Fecha de Inicio</label>
+                            <label for="fecha_inicio" class="form-label">
+                                <i class="fas fa-calendar-alt"></i> Fecha de Inicio
+                            </label>
                             <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" required>
                         </div>
                         <div class="mb-3">
-                            <label for="fecha_fin" class="form-label">Fecha de Fin</label>
+                            <label for="fecha_fin" class="form-label">
+                                <i class="fas fa-calendar-check"></i> Fecha de Fin
+                            </label>
                             <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" required>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Crear Contrato</button>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-plus-circle me-2"></i>Crear Contrato
+                        </button>
                     </form>
                 </div>
             </div>
@@ -212,7 +258,9 @@ try {
         <div class="col-12">
             <div class="card" style="background-color: #2c2c2c; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
                 <div class="card-body text-white">
-                    <h2 class="text-center mb-4">Contratos Activos</h2>
+                    <h2 class="text-center mb-4">
+                        <i class="fas fa-file-contract me-2"></i>Contratos Activos
+                    </h2>
                     <?php if (!empty($contratos)): ?>
                         <div class="row">
                             <?php foreach ($contratos as $contrato): ?>
@@ -220,15 +268,27 @@ try {
                                     <div class="card h-100" style="background-color:rgb(236, 233, 233);">
                                         <img src="<?php echo '../../../public/' . htmlspecialchars($contrato['url_imagen'] ?? ''); ?>" class="card-img-top" alt="Imagen" style="height: 200px; object-fit: cover;" onerror="this.src='../../../public/assets/img/default.jpg';">
                                         <div class="card-body">
-                                            <h5 class="card-title"><?php echo htmlspecialchars($contrato['direccion']); ?></h5>
-                                            <p class="card-text">Precio: <?php echo number_format($contrato['precio'], 2); ?></p>
-                                            <p class="card-text">Arrendatario: <?php echo htmlspecialchars($contrato['arrendatario_nombre']); ?></p>
-                                            <p class="card-text">Inicio: <?php echo $contrato['fecha_inicio']; ?></p>
-                                            <p class="card-text">Fin: <?php echo $contrato['fecha_fin']; ?></p>
+                                            <h5 class="card-title">
+                                                <i class="fas fa-map-marker-alt me-2"></i><?php echo htmlspecialchars($contrato['direccion']); ?>
+                                            </h5>
+                                            <p class="card-text">
+                                                <i class="fas fa-dollar-sign"></i> Precio: <?php echo number_format($contrato['precio'], 2); ?>
+                                            </p>
+                                            <p class="card-text">
+                                                <i class="fas fa-user"></i> Arrendatario: <?php echo htmlspecialchars($contrato['arrendatario_nombre']); ?>
+                                            </p>
+                                            <p class="card-text">
+                                                <i class="fas fa-calendar-alt"></i> Inicio: <?php echo $contrato['fecha_inicio']; ?>
+                                            </p>
+                                            <p class="card-text">
+                                                <i class="fas fa-calendar-check"></i> Fin: <?php echo $contrato['fecha_fin']; ?>
+                                            </p>
                                             <form method="POST" action="dashboardPropietario.php?page=contratos" style="display:inline;" id="finishForm<?php echo $contrato['id']; ?>">
                                                 <input type="hidden" name="finalizar" value="1">
                                                 <input type="hidden" name="contrato_id" value="<?php echo $contrato['id']; ?>">
-                                                <button type="button" class="btn btn-danger w-100" onclick="confirmFinish(<?php echo $contrato['id']; ?>)">Finalizar</button>
+                                                <button type="button" class="btn btn-danger w-100" onclick="confirmFinish(<?php echo $contrato['id']; ?>)">
+                                                    <i class="fas fa-times-circle me-2"></i>Finalizar
+                                                </button>
                                             </form>
                                         </div>
                                     </div>

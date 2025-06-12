@@ -214,104 +214,124 @@ if (empty($error)) {
     <div class="col-12">
         <div class="card" style="background-color: #2c2c2c; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
             <div class="card-body text-white">
-                <h2 class="text-center mb-4">Propiedades</h2>
+                <h2 class="text-center mb-4">
+                <i class="fa-solid fa-house-circle-check me-2"></i>    
+                Propiedades</h2>
             </div>
         </div>
     </div>
-    <div class="container mt-5">
+</div>
 
-
-        <!-- Modal para crear propiedad -->
-        <div class="modal fade" id="crearPropiedadModal" tabindex="-1" aria-labelledby="crearPropiedadModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div style="background-color: #232323; color:#fff; border-radius: 15px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);" class="modal-content">
-                    <form method="POST" action="dashboardPropietario.php?page=propiedades" enctype="multipart/form-data">
-                        <input type="hidden" name="crear" value="1">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="crearPropiedadModalLabel">Crear Propiedad</h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+<div class="container mt-5">
+    <!-- Modal para crear propiedad -->
+    <div class="modal fade" id="crearPropiedadModal" tabindex="-1" aria-labelledby="crearPropiedadModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div style="background-color: #232323; color:#fff; border-radius: 15px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);" class="modal-content">
+                <form method="POST" action="dashboardPropietario.php?page=propiedades" enctype="multipart/form-data">
+                    <input type="hidden" name="crear" value="1">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="crearPropiedadModalLabel">
+                        <i class="fa-solid fa-house-circle-check me-2"></i>    
+                        Crear Propiedad</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Dirección -->
+                        <div class="mb-3">
+                            <label for="direccion" class="form-label">
+                            <i class="fa-solid fa-location-dot me-2"></i>    
+                            Dirección</label>
+                            <input type="text" id="direccion" name="direccion" class="form-control" required>
                         </div>
-                        <div class="modal-body">
-                            <!-- Dirección -->
-                            <div class="mb-3">
-                                <label for="direccion" class="form-label">Dirección</label>
-                                <input type="text" id="direccion" name="direccion" class="form-control" required>
-                            </div>
-                            <!-- Precio -->
-                            <div class="mb-3">
-                                <label for="precio" class="form-label">Precio</label>
-                                <input type="number" id="precio" name="precio" class="form-control" step="0.01" required>
-                            </div>
-                            <!-- Descripción -->
-                            <div class="mb-3">
-                                <label for="descripcion" class="form-label">Descripción</label>
-                                <textarea id="descripcion" name="descripcion" class="form-control" rows="3" required></textarea>
-                            </div>
-                            <!-- Zona -->
-                            <div class="mb-3">
-                                <label for="zona" class="form-label">Zona</label>
-                                <select id="zona" name="zona" class="form-select" required>
-                                    <option disabled selected>Selecciona un Municipio</option>
-                                    <option value="Acevedo">Acevedo</option>
-                                    <option value="Agrado">Agrado</option>
-                                    <option value="Aipe">Aipe</option>
-                                    <option value="Algeciras">Algeciras</option>
-                                    <option value="Altamira">Altamira</option>
-                                    <option value="Baraya">Baraya</option>
-                                    <option value="Campoalegre">Campoalegre</option>
-                                    <option value="Colombia">Colombia</option>
-                                    <option value="Elías">Elías</option>
-                                    <option value="Garzón">Garzón</option>
-                                    <option value="Gigante">Gigante</option>
-                                    <option value="Guadalupe">Guadalupe</option>
-                                    <option value="Hobo">Hobo</option>
-                                    <option value="Íquira">Íquira</option>
-                                    <option value="Isnos">Isnos</option>
-                                    <option value="LaArgentina">La Argentina</option>
-                                    <option value="LaPlata">La Plata</option>
-                                    <option value="Nátaga">Nátaga</option>
-                                    <option value="Neiva">Neiva (capital)</option>
-                                    <option value="Oporapa">Oporapa</option>
-                                    <option value="Paicol">Paicol</option>
-                                    <option value="Palermo">Palermo</option>
-                                    <option value="Palestina">Palestina</option>
-                                    <option value="Pital">Pital</option>
-                                    <option value="Pitalito">Pitalito</option>
-                                    <option value="Rivera">Rivera</option>
-                                    <option value="Saladoblanco">Saladoblanco</option>
-                                    <option value="SanAgustín">San Agustín</option>
-                                    <option value="SantaMaría">Santa María</option>
-                                    <option value="Suaza">Suaza</option>
-                                    <option value="Tarqui">Tarqui</option>
-                                    <option value="Tello">Tello</option>
-                                    <option value="Teruel">Teruel</option>
-                                    <option value="Tesalia">Tesalia</option>
-                                    <option value="Timaná">Timaná</option>
-                                    <option value="Villavieja">Villavieja</option>
-                                    <option value="Yaguará">Yaguará</option>
-                                </select>
-                            </div>
-                            <!-- Imágenes -->
-                            <div class="mb-3">
-                                <label for="imagenes" class="form-label">Imágenes (máximo 5MB cada una)</label>
-                                <input type="file" id="imagenes" name="imagenes[]" class="form-control" multiple accept="image/jpeg,image/png,image/jpg">
-                            </div>
+                        <!-- Precio -->
+                        <div class="mb-3">                            
+                            <label for="precio" class="form-label">
+                            <i class="fa-solid fa-dollar-sign me-2"></i>    
+                            Precio</label>
+                            <input type="number" id="precio" name="precio" class="form-control" step="0.01" required>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary">Crear Propiedad</button>
+                        <!-- Descripción -->
+                        <div class="mb-3">                            
+                            <label for="descripcion" class="form-label">
+                            <i class="fa-solid fa-align-left me-2"></i>    
+                            Descripción</label>
+                            <textarea id="descripcion" name="descripcion" class="form-control" rows="3" required></textarea>
                         </div>
-                    </form>
-                </div>
+                        <!-- Zona -->
+                        <div class="mb-3">                            
+                            <label for="zona" class="form-label">
+                            <i class="fa-solid fa-map me-2"></i>    
+                            Zona</label>
+                            <select id="zona" name="zona" class="form-select" required>
+                                <option disabled selected>Selecciona un Municipio</option>
+                                <option value="Acevedo">Acevedo</option>
+                                <option value="Agrado">Agrado</option>
+                                <option value="Aipe">Aipe</option>
+                                <option value="Algeciras">Algeciras</option>
+                                <option value="Altamira">Altamira</option>
+                                <option value="Baraya">Baraya</option>
+                                <option value="Campoalegre">Campoalegre</option>
+                                <option value="Colombia">Colombia</option>
+                                <option value="Elías">Elías</option>
+                                <option value="Garzón">Garzón</option>
+                                <option value="Gigante">Gigante</option>
+                                <option value="Guadalupe">Guadalupe</option>
+                                <option value="Hobo">Hobo</option>
+                                <option value="Íquira">Íquira</option>
+                                <option value="Isnos">Isnos</option>
+                                <option value="LaArgentina">La Argentina</option>
+                                <option value="LaPlata">La Plata</option>
+                                <option value="Nátaga">Nátaga</option>
+                                <option value="Neiva">Neiva (capital)</option>
+                                <option value="Oporapa">Oporapa</option>
+                                <option value="Paicol">Paicol</option>
+                                <option value="Palermo">Palermo</option>
+                                <option value="Palestina">Palestina</option>
+                                <option value="Pital">Pital</option>
+                                <option value="Pitalito">Pitalito</option>
+                                <option value="Rivera">Rivera</option>
+                                <option value="Saladoblanco">Saladoblanco</option>
+                                <option value="SanAgustín">San Agustín</option>
+                                <option value="SantaMaría">Santa María</option>
+                                <option value="Suaza">Suaza</option>
+                                <option value="Tarqui">Tarqui</option>
+                                <option value="Tello">Tello</option>
+                                <option value="Teruel">Teruel</option>
+                                <option value="Tesalia">Tesalia</option>
+                                <option value="Timaná">Timaná</option>
+                                <option value="Villavieja">Villavieja</option>
+                                <option value="Yaguará">Yaguará</option>
+                            </select>
+                        </div>
+                        <!-- Imágenes -->
+                        <div class="mb-3">                            
+                            <label for="imagenes" class="form-label">
+                            <i class="fa-solid fa-image me-2"></i>    
+                            Imágenes (máximo 5MB cada una)</label>
+                            <input type="file" id="imagenes" name="imagenes[]" class="form-control" multiple accept="image/jpeg,image/png,image/jpg">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fa-solid fa-xmark me-2"></i>
+                            Cancelar</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa-solid fa-floppy-disk me-2"></i>
+                            Crear Propiedad</button>
+                    </div>
+                </form>
             </div>
         </div>
+    </div>
 
-        <!-- Tabla de propiedades -->
-        <div class="row">
-            <div class="col-12">
-                <div class="card" style="background-color: #2c2c2c; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
-                    <div class="card-body text-white">
-                        <h2 class="text-center mb-4">Lista de Propiedades</h2>
+    <!-- Tabla de propiedades -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card" style="background-color: #2c2c2c; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+                <div class="card-body text-white">                    
+                        <h2 class="text-center mb-4">
+                        <i class="fa-solid fa-building me-2"></i>    
+                        Lista de Propiedades</h2>
                         <!-- Botón para abrir el modal de crear propiedad -->
                         <div class="row justify-content-center mb-4">
                             <div class="col-md-6 text-center">
@@ -324,11 +344,11 @@ if (empty($error)) {
                             <table class="table table-dark table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Dirección</th>
-                                        <th>Estado</th>
-                                        <th>Precio</th>
-                                        <th>Imagen</th>
-                                        <th>Acciones</th>
+                                        <th><i class="fa-solid fa-location-dot"></i>Dirección</th>
+                                        <th><i class="fa-solid fa-circle-info"></i>Estado</th>
+                                        <th><i class="fa-solid fa-dollar-sign"></i>Precio</th>
+                                        <th><i class="fa-solid fa-image"></i>Imagen</th>
+                                        <th><i class="fa-solid fa-gears"></i>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -368,17 +388,19 @@ if (empty($error)) {
                                         <div class="modal fade" id="detailModal<?php echo $propiedad['id']; ?>" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
                                             <div class="modal-dialog modal-lg">
                                                 <div class="modal-content" style="background-color: #2c2c2c; color: white;">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="detailModalLabel">Detalles de la Propiedad</h5>
+                                                    <div class="modal-header">                                                        
+                                                        <h5 class="modal-title" id="detailModalLabel">
+                                                        <i class="fa-solid fa-circle-info me-2"></i>    
+                                                        Detalles de la Propiedad</h5>
                                                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <p><strong>Dirección:</strong> <?php echo htmlspecialchars($propiedad['direccion']); ?></p>
-                                                        <p><strong>Estado:</strong> <?php echo htmlspecialchars($propiedad['estado']); ?></p>
-                                                        <p><strong>Precio:</strong> <?php echo number_format($propiedad['precio'], 2); ?></p>
-                                                        <p><strong>Descripción:</strong> <?php echo htmlspecialchars($propiedad['descripcion']); ?></p>
-                                                        <p><strong>Zona:</strong> <?php echo htmlspecialchars($propiedad['zona']); ?></p>
-                                                        <p><strong>Imágenes:</strong></p>
+                                                        <p><i class="fa-solid fa-location-dot me-2"></i><strong>Dirección:</strong> <?php echo htmlspecialchars($propiedad['direccion']); ?></p>
+                                                        <p><i class="fa-solid fa-circle-info me-2"></i><strong>Estado:</strong> <?php echo htmlspecialchars($propiedad['estado']); ?></p>
+                                                        <p><i class="fa-solid fa-dollar-sign me-2"></i><strong>Precio:</strong> <?php echo number_format($propiedad['precio'], 2); ?></p>
+                                                        <p><i class="fa-solid fa-align-left me-2"></i><strong>Descripción:</strong> <?php echo htmlspecialchars($propiedad['descripcion']); ?></p>
+                                                        <p><i class="fa-solid fa-map me-2"></i><strong>Zona:</strong> <?php echo htmlspecialchars($propiedad['zona']); ?></p>
+                                                        <p><i class="fa-solid fa-images me-2"></i><strong>Imágenes:</strong></p>
                                                         <?php
                                                         $stmt = $pdo->prepare("SELECT url_imagen, descripcion FROM imagenes_propiedad WHERE id_propiedad = :propiedad_id ORDER BY orden");
                                                         $stmt->execute(['propiedad_id' => $propiedad['id']]);
@@ -396,8 +418,10 @@ if (empty($error)) {
                                         <div class="modal fade" id="editModal<?php echo $propiedad['id']; ?>" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
                                             <div class="modal-dialog modal-lg">
                                                 <div class="modal-content" style="background-color: #2c2c2c; color: white;">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="editModalLabel">Editar Propiedad</h5>
+                                                    <div class="modal-header">                                                        
+                                                        <h5 class="modal-title" id="editModalLabel">
+                                                        <i class="fa-solid fa-pen-to-square me-2"></i>    
+                                                        Editar Propiedad</h5>
                                                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
@@ -405,22 +429,29 @@ if (empty($error)) {
                                                             <input type="hidden" name="editar" value="1">
                                                             <input type="hidden" name="propiedad_id" value="<?php echo $propiedad['id']; ?>">
                                                             <!-- Dirección -->
-                                                            <div class="mb-3">
-                                                                <label for="direccion_<?php echo $propiedad['id']; ?>" class="form-label">Dirección</label>
+                                                            <div class="mb-3">                                                                
+                                                                <label for="direccion_<?php echo $propiedad['id']; ?>" class="form-label">
+                                                                <i class="fa-solid fa-location-dot me-2"></i>    
+                                                                Dirección</label>
                                                                 <input type="text" id="direccion_<?php echo $propiedad['id']; ?>" name="direccion" class="form-control" value="<?php echo htmlspecialchars($propiedad['direccion']); ?>" required>
                                                             </div>
                                                             <!-- Precio -->
-                                                            <div class="mb-3">
-                                                                <label for="precio_<?php echo $propiedad['id']; ?>" class="form-label">Precio</label>
+                                                            <div class="mb-3">                                                                
+                                                                <label for="precio_<?php echo $propiedad['id']; ?>" class="form-label">
+                                                                <i class="fa-solid fa-dollar-sign me-2"></i>    
+                                                                Precio</label>
                                                                 <input type="number" id="precio_<?php echo $propiedad['id']; ?>" name="precio" class="form-control" value="<?php echo $propiedad['precio']; ?>" step="0.01" required>
                                                             </div>
                                                             <!-- Descripción -->
-                                                            <div class="mb-3">
-                                                                <label for="descripcion_<?php echo $propiedad['id']; ?>" class="form-label">Descripción</label>
+                                                            <div class="mb-3">                                                                
+                                                                    <label for="descripcion_<?php echo $propiedad['id']; ?>" class="form-label">
+                                                                    <i class="fa-solid fa-align-left me-2"></i>    
+                                                                    Descripción</label>
                                                                 <textarea id="descripcion_<?php echo $propiedad['id']; ?>" name="descripcion" class="form-control" rows="3" required><?php echo htmlspecialchars($propiedad['descripcion']); ?></textarea>
                                                             </div>
                                                             <!-- Zona -->
                                                             <div class="mb-3">
+                                                                <i class="fa-solid fa-map me-2"></i>
                                                                 <label for="zona_<?php echo $propiedad['id']; ?>" class="form-label">Zona</label>
                                                                 <select id="zona_<?php echo $propiedad['id']; ?>" name="zona" class="form-select" required>
                                                                     <option value="Acevedo" <?php echo $propiedad['zona'] === 'Acevedo' ? 'selected' : ''; ?>>Acevedo</option>
@@ -463,11 +494,15 @@ if (empty($error)) {
                                                                 </select>
                                                             </div>
                                                             <!-- Imágenes -->
-                                                            <div class="mb-3">
-                                                                <label for="imagenes_<?php echo $propiedad['id']; ?>" class="form-label">Nuevas Imágenes (máximo 5MB cada una)</label>
+                                                            <div class="mb-3">                                                    
+                                                                <label for="imagenes_<?php echo $propiedad['id']; ?>" class="form-label">
+                                                                <i class="fa-solid fa-image me-2"></i>    
+                                                                Nuevas Imágenes (máximo 5MB cada una)</label>
                                                                 <input type="file" id="imagenes_<?php echo $propiedad['id']; ?>" name="imagenes[]" class="form-control" multiple accept="image/jpeg,image/png,image/jpg">
                                                             </div>
-                                                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                                            <button type="submit" class="btn btn-primary">
+                                                                <i class="fa-solid fa-floppy-disk me-2"></i>
+                                                                Guardar Cambios</button>
                                                         </form>
                                                     </div>
                                                 </div>
@@ -479,58 +514,59 @@ if (empty($error)) {
                         <?php else: ?>
                             <p class="text-center">No hay propiedades registradas.</p>
                         <?php endif; ?>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous"></script>
-    <!-- Bootstrap Icons CDN for plus icon (optional, can remove if not needed) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous"></script>
+<!-- Bootstrap Icons CDN for plus icon (optional, can remove if not needed) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 
-    <!-- Mostrar SweetAlert si hay éxito o error -->
-    <?php if (!empty($success)): ?>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: '¡Éxito!',
-                text: '<?php echo $success; ?>',
-            }).then(() => {
-                window.location.href = 'dashboardPropietario.php?page=propiedades'; // Redirigir a la misma página para actualizar la lista
-            });
-        </script>
-    <?php elseif (!empty($error)): ?>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: '<?php echo $error; ?>',
-            }).then(() => {
-                window.location.href = 'dashboardPropietario.php?page=propiedades'; // Redirigir a la misma página para actualizar la lista
-            });
-        </script>
-    <?php endif; ?>
-
-    <!-- Script para confirmación de eliminación con SweetAlert2 -->
+<!-- Mostrar SweetAlert si hay éxito o error -->
+<?php if (!empty($success)): ?>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        function confirmDelete(id) {
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: 'Esta acción eliminará la propiedad y sus imágenes permanentemente.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Confirmar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById('deleteForm' + id).submit();
-                }
-            });
-        }
+        Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: '<?php echo $success; ?>',
+        }).then(() => {
+            window.location.href = 'dashboardPropietario.php?page=propiedades'; // Redirigir a la misma página para actualizar la lista
+        });
     </script>
+<?php elseif (!empty($error)): ?>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: '<?php echo $error; ?>',
+        }).then(() => {
+            window.location.href = 'dashboardPropietario.php?page=propiedades'; // Redirigir a la misma página para actualizar la lista
+        });
+    </script>
+<?php endif; ?>
+
+<!-- Script para confirmación de eliminación con SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmDelete(id) {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: 'Esta acción eliminará la propiedad y sus imágenes permanentemente.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Confirmar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('deleteForm' + id).submit();
+            }
+        });
+    }
+</script>

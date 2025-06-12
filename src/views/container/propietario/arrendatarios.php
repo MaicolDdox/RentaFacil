@@ -201,34 +201,44 @@ try {
     <div class="col-12">
         <div class="card" style="background-color: #2c2c2c; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
             <div class="card-body text-white">
-                <h2 class="text-center mb-4">ARRENDATARIOS</h2>
+                <h2 class="text-center mb-4">
+                    <i class="fa-solid fa-users me-2"></i>ARRENDATARIOS
+                </h2>
             </div>
         </div>
     </div>
 </div>
-<div class="container mt-5">
 
+<div class="container mt-5">
     <!-- Modal para crear arrendatario -->
     <div class="modal fade" id="crearArrendatarioModal" tabindex="-1" aria-labelledby="crearArrendatarioModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content" style="background-color: #2c2c2c; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
                 <div class="modal-header">
-                    <h2 class="modal-title text-white" id="crearArrendatarioModalLabel">Crear Arrendatario</h2>
+                    <h2 class="modal-title text-white" id="crearArrendatarioModalLabel">
+                        <i class="fa-solid fa-user-plus me-2"></i>Crear Arrendatario
+                    </h2>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-white">
                     <!-- Mensajes de error/éxito solo si el modal está abierto -->
                     <?php if (!empty($error)): ?>
-                        <div class="alert alert-danger" role="alert"><?php echo $error; ?></div>
+                        <div class="alert alert-danger" role="alert">
+                            <i class="fa-solid fa-circle-exclamation me-2"></i><?php echo $error; ?>
+                        </div>
                     <?php elseif (!empty($success)): ?>
-                        <div class="alert alert-success" role="alert"><?php echo $success; ?></div>
+                        <div class="alert alert-success" role="alert">
+                            <i class="fa-solid fa-circle-check me-2"></i><?php echo $success; ?>
+                        </div>
                     <?php endif; ?>
 
                     <form method="POST" action="dashboardPropietario.php?page=arrendatarios" id="crearArrendatario">
                         <input type="hidden" name="crear" value="1">
                         <!-- Campo para seleccionar postulación -->
                         <div class="mb-3">
-                            <label for="postulacion_id" class="form-label">Seleccionar Postulación (opcional)</label>
+                            <label for="postulacion_id" class="form-label">
+                                <i class="fa-solid fa-file-signature me-2"></i>Seleccionar Postulación (opcional)
+                            </label>
                             <select class="form-control" id="postulacion_id" name="postulacion_id">
                                 <option value="">Crear manualmente o seleccionar postulación</option>
                                 <?php foreach ($postulaciones as $postulacion): ?>
@@ -240,25 +250,35 @@ try {
                         </div>
                         <!-- Nombre -->
                         <div class="mb-3">
-                            <label for="nombre" class="form-label">Usuario</label>
+                            <label for="nombre" class="form-label">
+                                <i class="fa-solid fa-user me-2"></i>Usuario
+                            </label>
                             <input type="text" id="nombre" name="nombre" class="form-control" required>
                         </div>
                         <!-- Correo -->
                         <div class="mb-3">
-                            <label for="correo" class="form-label">Correo Electrónico</label>
+                            <label for="correo" class="form-label">
+                                <i class="fa-solid fa-envelope me-2"></i>Correo Electrónico
+                            </label>
                             <input type="email" id="correo" name="correo" class="form-control" required>
                         </div>
                         <!-- Teléfono -->
                         <div class="mb-3">
-                            <label for="telefono" class="form-label">Teléfono</label>
+                            <label for="telefono" class="form-label">
+                                <i class="fa-solid fa-phone me-2"></i>Teléfono
+                            </label>
                             <input type="text" id="telefono" name="telefono" class="form-control">
                         </div>
                         <!-- Contraseña -->
                         <div class="mb-3">
-                            <label for="contrasena" class="form-label">Contraseña</label>
+                            <label for="contrasena" class="form-label">
+                                <i class="fa-solid fa-lock me-2"></i>Contraseña
+                            </label>
                             <input type="password" id="contrasena" name="contrasena" class="form-control" required>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Crear Arrendatario</button>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fa-solid fa-user-plus me-2"></i>Crear Arrendatario
+                        </button>
                     </form>
                 </div>
             </div>
@@ -270,7 +290,9 @@ try {
         <div class="col-12">
             <div class="card" style="background-color: #2c2c2c; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
                 <div class="card-body text-white">
-                    <h2 class="text-center mb-4">Lista de Arrendatarios</h2>
+                    <h2 class="text-center mb-4">
+                        <i class="fa-solid fa-list me-2"></i>Lista de Arrendatarios
+                    </h2>
                     <!-- Botón para abrir el modal de crear arrendatario -->
                     <div class="row justify-content-center mb-4">
                         <div class="col-md-6 text-center">
@@ -283,10 +305,10 @@ try {
                         <table class="table table-dark table-hover">
                             <thead>
                                 <tr>
-                                    <th>Nombre</th>
-                                    <th>Correo</th>
-                                    <th>Teléfono</th>
-                                    <th>Acciones</th>
+                                    <th><i class="fa-solid fa-user"></i> Nombre</th>
+                                    <th><i class="fa-solid fa-envelope"></i> Correo</th>
+                                    <th><i class="fa-solid fa-phone"></i> Teléfono</th>
+                                    <th><i class="fa-solid fa-gears"></i> Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -316,7 +338,9 @@ try {
                                         <div class="modal-dialog">
                                             <div class="modal-content" style="background-color: #2c2c2c; color: white;">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="editModalLabel">Editar Arrendatario</h5>
+                                                    <h5 class="modal-title" id="editModalLabel">
+                                                        <i class="fa-solid fa-user-pen me-2"></i>Editar Arrendatario
+                                                    </h5>
                                                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body">
@@ -325,25 +349,35 @@ try {
                                                         <input type="hidden" name="user_id" value="<?php echo $arrendatario['id']; ?>">
                                                         <!-- Nombre -->
                                                         <div class="mb-3">
-                                                            <label for="nombre_<?php echo $arrendatario['id']; ?>" class="form-label">Nombre</label>
+                                                            <label for="nombre_<?php echo $arrendatario['id']; ?>" class="form-label">
+                                                                <i class="fa-solid fa-user me-2"></i>Nombre
+                                                            </label>
                                                             <input type="text" id="nombre_<?php echo $arrendatario['id']; ?>" name="nombre" class="form-control" value="<?php echo htmlspecialchars($arrendatario['nombre']); ?>" required>
                                                         </div>
                                                         <!-- Correo -->
                                                         <div class="mb-3">
-                                                            <label for="correo_<?php echo $arrendatario['id']; ?>" class="form-label">Correo Electrónico</label>
+                                                            <label for="correo_<?php echo $arrendatario['id']; ?>" class="form-label">
+                                                                <i class="fa-solid fa-envelope me-2"></i>Correo Electrónico
+                                                            </label>
                                                             <input type="email" id="correo_<?php echo $arrendatario['id']; ?>" name="correo" class="form-control" value="<?php echo htmlspecialchars($arrendatario['correo']); ?>" required>
                                                         </div>
                                                         <!-- Teléfono -->
                                                         <div class="mb-3">
-                                                            <label for="telefono_<?php echo $arrendatario['id']; ?>" class="form-label">Teléfono</label>
+                                                            <label for="telefono_<?php echo $arrendatario['id']; ?>" class="form-label">
+                                                                <i class="fa-solid fa-phone me-2"></i>Teléfono
+                                                            </label>
                                                             <input type="text" id="telefono_<?php echo $arrendatario['id']; ?>" name="telefono" class="form-control" value="<?php echo htmlspecialchars($arrendatario['telefono'] ?? ''); ?>">
                                                         </div>
                                                         <!-- Contraseña -->
                                                         <div class="mb-3">
-                                                            <label for="contrasena_<?php echo $arrendatario['id']; ?>" class="form-label">Nueva Contraseña (opcional)</label>
+                                                            <label for="contrasena_<?php echo $arrendatario['id']; ?>" class="form-label">
+                                                                <i class="fa-solid fa-lock me-2"></i>Nueva Contraseña (opcional)
+                                                            </label>
                                                             <input type="password" id="contrasena_<?php echo $arrendatario['id']; ?>" name="contrasena" class="form-control">
                                                         </div>
-                                                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                                        <button type="submit" class="btn btn-primary">
+                                                            <i class="fa-solid fa-floppy-disk me-2"></i>Guardar Cambios
+                                                        </button>
                                                     </form>
                                                 </div>
                                             </div>
@@ -353,14 +387,15 @@ try {
                             </tbody>
                         </table>
                     <?php else: ?>
-                        <p class="text-center">No hay arrendatarios registrados.</p>
+                        <p class="text-center">
+                            <i class="fa-solid fa-circle-info me-2"></i>No hay arrendatarios registrados.
+                        </p>
                     <?php endif; ?>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 
 <!-- Mostrar SweetAlert si hay éxito o error -->
 <?php if (!empty($success)): ?>

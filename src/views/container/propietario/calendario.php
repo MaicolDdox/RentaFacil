@@ -71,7 +71,9 @@ try {
     <div class="col-12">
         <div class="card" style="background-color: #2c2c2c; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
             <div class="card-body text-white">
-                <h2 class="text-center mb-4">CALENDARIO</h2>
+                <h2 class="text-center mb-4">
+                <i class="fas fa-calendar"></i>    
+                CALENDARIO</h2>
             </div>
         </div>
     </div>
