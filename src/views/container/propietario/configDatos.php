@@ -85,36 +85,54 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['actualizar'])) {
 <div class="container mt-5">
     <div class="card" style="background-color: #2c2c2c; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
         <div class="card-body text-white">
-            <h2 class="text-center mb-4">Configurar Datos Personales</h2>
+            <h2 class="text-center mb-4">
+                <i class="fa-solid fa-user-gear me-2"></i>Configurar Datos Personales
+            </h2>
             <?php if (!empty($error)): ?>
-                <div class="alert alert-danger" role="alert"><?php echo $error; ?></div>
+                <div class="alert alert-danger" role="alert">
+                    <i class="fa-solid fa-circle-exclamation me-2"></i><?php echo $error; ?>
+                </div>
             <?php elseif (!empty($success)): ?>
-                <div class="alert alert-success" role="alert"><?php echo $success; ?></div>
+                <div class="alert alert-success" role="alert">
+                    <i class="fa-solid fa-circle-check me-2"></i><?php echo $success; ?>
+                </div>
             <?php endif; ?>
 
             <form method="POST" action="dashboardPropietario.php?page=configuraciones">
                 <input type="hidden" name="actualizar" value="1">
                 <div class="mb-3">
-                    <label for="nombre" class="form-label">Nombre</label>
+                    <label for="nombre" class="form-label">
+                        <i class="fa-solid fa-user me-2"></i>Nombre
+                    </label>
                     <input type="text" class="form-control" id="nombre" name="nombre" value="<?php echo htmlspecialchars($propietario['nombre']); ?>" required>
                 </div>
                 <div class="mb-3">
-                    <label for="correo" class="form-label">Correo</label>
+                    <label for="correo" class="form-label">
+                        <i class="fa-solid fa-envelope me-2"></i>Correo
+                    </label>
                     <input type="email" class="form-control" id="correo" name="correo" value="<?php echo htmlspecialchars($propietario['correo']); ?>" required>
                 </div>
                 <div class="mb-3">
-                    <label for="telefono" class="form-label">Teléfono</label>
+                    <label for="telefono" class="form-label">
+                        <i class="fa-solid fa-phone me-2"></i>Teléfono
+                    </label>
                     <input type="tel" class="form-control" id="telefono" name="telefono" value="<?php echo htmlspecialchars($propietario['telefono']); ?>" required>
                 </div>
                 <div class="mb-3">
-                    <label for="contrasena" class="form-label">Contraseña (dejar en blanco para no cambiar)</label>
+                    <label for="contrasena" class="form-label">
+                        <i class="fa-solid fa-lock me-2"></i>Contraseña <span class="text-secondary">(dejar en blanco para no cambiar)</span>
+                    </label>
                     <input type="password" class="form-control" id="contrasena" name="contrasena">
                 </div>
                 <div class="mb-3">
-                    <label for="contrasena2" class="form-label">Confirmar Contraseña (dejar en blanco para no cambiar)</label>
+                    <label for="contrasena2" class="form-label">
+                        <i class="fa-solid fa-lock me-2"></i>Confirmar Contraseña <span class="text-secondary">(dejar en blanco para no cambiar)</span>
+                    </label>
                     <input type="password" class="form-control" id="contrasena2" name="contrasena2">
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Actualizar</button>
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fa-solid fa-floppy-disk me-2"></i>Actualizar
+                </button>
             </form>
         </div>
     </div>
