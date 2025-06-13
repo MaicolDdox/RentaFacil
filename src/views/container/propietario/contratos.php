@@ -172,6 +172,21 @@ try {
 } catch (PDOException $e) {
     $error = "Error al cargar datos: " . $e->getMessage();
 }
+
+// Procesar la renovación del contrato
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['renovar_contrato'])) {
+    $id_contrato = $_POST['id_contrato'];
+    $nueva_fecha_fin = $_POST['nueva_fecha_fin'];
+
+    try {
+        $stmt = $pdo->prepare("UPDATE contratos SET fecha_fin = :fecha_fin WHERE id = :id_contrato AND estado = 'Activo'");
+        $stmt->execute(['fecha_fin' => $nueva_fecha_fin, 'id_contrato' => $id_contrato]);
+        $success = "Contrato renovado correctamente hasta el $nueva_fecha_fin.";
+    } catch (PDOException $e) {
+        $error = "Error al renovar el contrato: " . $e->getMessage();
+    }
+}
+
 ?>
 
 <div class="container mt-5">
@@ -283,6 +298,8 @@ try {
                 </div>
             </div>
 
+
+
             <!-- Lista de contratos activos -->
             <div class="mt-5">
                 <h3><i class="fas fa-file-contract me-2"></i>Contratos Activos</h3>
@@ -321,11 +338,46 @@ try {
                                                     <i class="fas fa-times-circle me-2"></i>Finalizar
                                                 </button>
                                             </form>
+                                            <form>
+                                                <!-- Elimina los inputs ocultos y el form innecesario aquí -->
+                                                <button style="color: #ffff;" type="button" class="btn btn-info w-100" data-bs-toggle="modal" data-bs-target="#renovarContratoModal" onclick="setContratoIdRenovar(<?php echo $contrato['id']; ?>)">
+                                                    <i class="fa fa-rotate-right me-2"></i>Renovar
+                                                </button>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         <?php endforeach; ?>
+
+                        <!-- Modal Renovar Contrato -->
+                        <div class="modal fade" id="renovarContratoModal" tabindex="-1" aria-labelledby="renovarContratoModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content" style="background-color: #2c2c2c; border-radius: 15px;">
+                                    <div class="modal-header border-0">
+                                        <h2 class="modal-title text-white w-100 text-center" id="renovarContratoModalLabel">
+                                            <i class="fa fa-rotate-right me-2"></i>Renovar Contrato
+                                        </h2>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                    </div>
+                                    <div class="modal-body text-white">
+                                        <form method="POST" action="dashboardPropietario.php?page=contratos">
+                                            <input type="hidden" name="renovar_contrato" value="1">
+                                            <input type="hidden" name="id_contrato" id="idContratoRenovar">
+                                            <div class="mb-3">
+                                                <label for="nueva_fecha_fin" class="form-label">
+                                                    <i class="fas fa-calendar-check"></i> Nueva Fecha de Fin
+                                                </label>
+                                                <input type="date" class="form-control" id="nueva_fecha_fin" name="nueva_fecha_fin" required>
+                                            </div>
+                                            <button style="color: #ffff;" type="button" class="btn btn-info w-100" onclick="confirmarRenovacion()">
+                                                <i class="fa fa-rotate-right me-2"></i>Renovar
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 <?php else: ?>
                     <p class="text-center">No hay contratos activos.</p>
@@ -334,6 +386,37 @@ try {
         </div>
     </div>
 </div>
+
+<script>
+    function setContratoIdRenovar(id) {
+        document.getElementById('idContratoRenovar').value = id;
+    }
+</script>
+
+<script>
+    function confirmarRenovacion() {
+        const fechaFin = document.getElementById('nueva_fecha_fin').value;
+        if (!fechaFin) {
+            Swal.fire('Error', 'Debes seleccionar una nueva fecha de fin.', 'error');
+            return;
+        }
+        Swal.fire({
+            title: '¿Renovar contrato?',
+            text: '¿Deseas renovar este contrato hasta ' + fechaFin + '?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#17a2b8',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, renovar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Envía el formulario del modal
+                document.querySelector('#renovarContratoModal form').submit();
+            }
+        });
+    }
+</script>
 
 <!-- Script para confirmación de finalización y autocompletar propiedad -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

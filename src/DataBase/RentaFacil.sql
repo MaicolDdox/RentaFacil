@@ -32,9 +32,12 @@ CREATE TABLE IF NOT EXISTS `arrendatarios` (
   CONSTRAINT `arrendatarios_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`),
   CONSTRAINT `arrendatarios_ibfk_2` FOREIGN KEY (`id_propiedad`) REFERENCES `propiedades` (`id`),
   CONSTRAINT `arrendatarios_ibfk_3` FOREIGN KEY (`id_propietario`) REFERENCES `propietarios` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla rentafacil.arrendatarios: ~2 rows (aproximadamente)
+-- Volcando datos para la tabla rentafacil.arrendatarios: ~0 rows (aproximadamente)
+INSERT INTO `arrendatarios` (`id`, `id_usuario`, `id_propiedad`, `id_propietario`) VALUES
+	(30, 66, 12, 7),
+	(31, 67, 14, 7);
 
 -- Volcando estructura para tabla rentafacil.contratos
 CREATE TABLE IF NOT EXISTS `contratos` (
@@ -43,7 +46,6 @@ CREATE TABLE IF NOT EXISTS `contratos` (
   `id_arrendatario` int DEFAULT NULL,
   `fecha_inicio` date DEFAULT NULL,
   `fecha_fin` date DEFAULT NULL,
-  `condiciones` text COLLATE utf8mb4_general_ci,
   `estado` enum('Activo','Finalizado','Cancelado') COLLATE utf8mb4_general_ci DEFAULT 'Activo',
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
@@ -52,9 +54,32 @@ CREATE TABLE IF NOT EXISTS `contratos` (
   KEY `id_arrendatario` (`id_arrendatario`),
   CONSTRAINT `contratos_ibfk_1` FOREIGN KEY (`id_propiedad`) REFERENCES `propiedades` (`id`),
   CONSTRAINT `contratos_ibfk_2` FOREIGN KEY (`id_arrendatario`) REFERENCES `arrendatarios` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla rentafacil.contratos: ~2 rows (aproximadamente)
+-- Volcando datos para la tabla rentafacil.contratos: ~0 rows (aproximadamente)
+
+-- Volcando estructura para tabla rentafacil.contratos_enviados
+CREATE TABLE IF NOT EXISTS `contratos_enviados` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `id_arrendatario` int DEFAULT NULL,
+  `id_propietario` int DEFAULT NULL,
+  `id_propiedad` int DEFAULT NULL,
+  `archivo_pdf` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `fecha_envio` datetime DEFAULT CURRENT_TIMESTAMP,
+  `estado` enum('Pendiente','Revisado','Rechazado') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT 'Pendiente',
+  `id_contrato_asociado` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id_arrendatario` (`id_arrendatario`),
+  KEY `id_propietario` (`id_propietario`),
+  KEY `id_propiedad` (`id_propiedad`),
+  KEY `id_contrato_asociado` (`id_contrato_asociado`),
+  CONSTRAINT `contratos_enviados_ibfk_1` FOREIGN KEY (`id_arrendatario`) REFERENCES `arrendatarios` (`id`),
+  CONSTRAINT `contratos_enviados_ibfk_2` FOREIGN KEY (`id_propietario`) REFERENCES `propietarios` (`id`),
+  CONSTRAINT `contratos_enviados_ibfk_3` FOREIGN KEY (`id_propiedad`) REFERENCES `propiedades` (`id`),
+  CONSTRAINT `contratos_enviados_ibfk_4` FOREIGN KEY (`id_contrato_asociado`) REFERENCES `contratos` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Volcando datos para la tabla rentafacil.contratos_enviados: ~0 rows (aproximadamente)
 
 -- Volcando estructura para tabla rentafacil.estado_pagos
 CREATE TABLE IF NOT EXISTS `estado_pagos` (
@@ -76,9 +101,9 @@ CREATE TABLE IF NOT EXISTS `estado_pagos` (
   CONSTRAINT `estado_pagos_ibfk_1` FOREIGN KEY (`id_contrato`) REFERENCES `contratos` (`id`),
   CONSTRAINT `estado_pagos_ibfk_2` FOREIGN KEY (`id_arrendatario`) REFERENCES `arrendatarios` (`id`),
   CONSTRAINT `estado_pagos_ibfk_3` FOREIGN KEY (`id_propiedad`) REFERENCES `propiedades` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla rentafacil.estado_pagos: ~5 rows (aproximadamente)
+-- Volcando datos para la tabla rentafacil.estado_pagos: ~0 rows (aproximadamente)
 
 -- Volcando estructura para tabla rentafacil.eventos
 CREATE TABLE IF NOT EXISTS `eventos` (
@@ -106,9 +131,31 @@ CREATE TABLE IF NOT EXISTS `imagenes_propiedad` (
   PRIMARY KEY (`id`),
   KEY `id_propiedad` (`id_propiedad`),
   CONSTRAINT `imagenes_propiedad_ibfk_1` FOREIGN KEY (`id_propiedad`) REFERENCES `propiedades` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla rentafacil.imagenes_propiedad: ~9 rows (aproximadamente)
+-- Volcando datos para la tabla rentafacil.imagenes_propiedad: ~3 rows (aproximadamente)
+INSERT INTO `imagenes_propiedad` (`id`, `id_propiedad`, `url_imagen`, `descripcion`, `orden`) VALUES
+	(14, 12, 'assets/img/propiedades/6848555b19526_1.png', 'Imagen 1', 1),
+	(16, 14, 'assets/img/propiedades/68485ae743a50_2.jpeg', 'Imagen 1', 1),
+	(18, 16, 'assets/img/propiedades/6848d179da1d1_3.jpeg', 'Imagen 1', 1),
+	(19, 17, 'assets/img/propiedades/6848d273d1f3f_4.jpeg', 'Imagen 1', 1);
+
+-- Volcando estructura para tabla rentafacil.pagos
+CREATE TABLE IF NOT EXISTS `pagos` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `id_contrato` int DEFAULT NULL,
+  `fecha_pago` date DEFAULT NULL,
+  `periodo` varchar(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `monto` decimal(10,2) DEFAULT NULL,
+  `estado` enum('Pendiente','Pagado','Retrasado') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id_contrato` (`id_contrato`),
+  CONSTRAINT `pagos_ibfk_1` FOREIGN KEY (`id_contrato`) REFERENCES `contratos` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Volcando datos para la tabla rentafacil.pagos: ~0 rows (aproximadamente)
 
 -- Volcando estructura para tabla rentafacil.password_resets
 CREATE TABLE IF NOT EXISTS `password_resets` (
@@ -122,7 +169,7 @@ CREATE TABLE IF NOT EXISTS `password_resets` (
   KEY `token` (`token`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla rentafacil.password_resets: ~2 rows (aproximadamente)
+-- Volcando datos para la tabla rentafacil.password_resets: ~0 rows (aproximadamente)
 
 -- Volcando estructura para tabla rentafacil.postulaciones
 CREATE TABLE IF NOT EXISTS `postulaciones` (
@@ -136,7 +183,7 @@ CREATE TABLE IF NOT EXISTS `postulaciones` (
   UNIQUE KEY `correo` (`correo`),
   KEY `id_propiedad` (`id_propiedad`),
   CONSTRAINT `postulaciones_ibfk_1` FOREIGN KEY (`id_propiedad`) REFERENCES `propiedades` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Volcando datos para la tabla rentafacil.postulaciones: ~0 rows (aproximadamente)
 
@@ -154,9 +201,14 @@ CREATE TABLE IF NOT EXISTS `propiedades` (
   PRIMARY KEY (`id`),
   KEY `id_propietario` (`id_propietario`),
   CONSTRAINT `propiedades_ibfk_1` FOREIGN KEY (`id_propietario`) REFERENCES `propietarios` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla rentafacil.propiedades: ~7 rows (aproximadamente)
+-- Volcando datos para la tabla rentafacil.propiedades: ~4 rows (aproximadamente)
+INSERT INTO `propiedades` (`id`, `id_propietario`, `direccion`, `estado`, `precio`, `descripcion`, `zona`, `created_at`, `updated_at`) VALUES
+	(12, 7, 'calle 45 Sur #45-79', 'Disponible', 4000000.00, 'Casa grande colombiana', 'Tello', '2025-06-10 10:55:07', '2025-06-12 16:05:18'),
+	(14, 7, 'La Septima Cr.9 #12-90 B', 'Disponible', 2000000.00, 'Casa central espaciosa pero no para una familia tan grande', 'Tello', '2025-06-10 11:18:47', '2025-06-12 14:10:56'),
+	(16, 7, 'Calle 90-A #45-77', 'Disponible', 5000000.00, 'Casa grande y moderna', 'Tello', '2025-06-10 19:44:41', '2025-06-12 14:21:33'),
+	(17, 7, 'Cr.8 #190-D', 'Disponible', 50000.00, 'Casa humilde en zona guerrillera', 'Tello', '2025-06-10 19:48:51', '2025-06-11 10:52:19');
 
 -- Volcando estructura para tabla rentafacil.propietarios
 CREATE TABLE IF NOT EXISTS `propietarios` (
@@ -165,9 +217,11 @@ CREATE TABLE IF NOT EXISTS `propietarios` (
   PRIMARY KEY (`id`),
   KEY `id_usuario` (`id_usuario`),
   CONSTRAINT `propietarios_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla rentafacil.propietarios: ~4 rows (aproximadamente)
+-- Volcando datos para la tabla rentafacil.propietarios: ~0 rows (aproximadamente)
+INSERT INTO `propietarios` (`id`, `id_usuario`) VALUES
+	(7, 60);
 
 -- Volcando estructura para tabla rentafacil.usuarios
 CREATE TABLE IF NOT EXISTS `usuarios` (
@@ -182,9 +236,13 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   `is_verified` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `correo` (`correo`)
-) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=68 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla rentafacil.usuarios: ~8 rows (aproximadamente)
+-- Volcando datos para la tabla rentafacil.usuarios: ~3 rows (aproximadamente)
+INSERT INTO `usuarios` (`id`, `nombre`, `correo`, `telefono`, `contrasena`, `created_at`, `updated_at`, `verification_code`, `is_verified`) VALUES
+	(60, 'Maicol Duvan', 'maicolduvangascarodas@gmail.com', '3214743715', '$2y$10$TbRUV6y6nXyRYoE990d.ZeiBgc9rzwOV1euwB6a8/QcLwFmu/YDoW', '2025-06-10 07:53:14', '2025-06-10 07:53:33', '224612', 1),
+	(66, 'Daniela Bustos', 'dani@gmail.com', '3213017238', '$2y$10$LPKdjo0WpQ49XeetbyEfgufClAw0VJhlw.hKcyCukuSPLKJ1OSAvi', '2025-06-11 14:35:33', '2025-06-11 14:35:33', NULL, 1),
+	(67, 'Joel Santiago', 'joel@gmail.com', '3108860500', '$2y$10$jdGMOupqUtuG9fH7mLWPLeptCHED1L4tZz3T41/RkLM7pPxvpy.ty', '2025-06-11 21:02:07', '2025-06-11 21:02:07', NULL, 1);
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
