@@ -1,0 +1,64 @@
+ /* Estilos para home.php (Arrendatario) */
+    body {
+        color: #fff;
+    }
+
+    .stat-card {
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        transition: transform 0.2s;
+        height: 100%;
+        /* Asegura que las cards tengan la misma altura */
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .bg-warning {
+        background-color: #ffc107 !important;
+    }
+
+    .bg-danger {
+        background-color: #dc3545 !important;
+    }
+
+    .bg-success {
+        background-color: #28a745 !important;
+    }
+
+    .bg-primary {
+        background-color: #007bff !important;
+    }
+
+    .card.bg-secondary {
+        border: 2px solid #6c757d;
+        border-radius: 15px;
+    }
+
+    .card.bg-secondary .card-body {
+        padding: 20px;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+
+    .display-4 {
+        font-size: 2.5rem;
+        font-weight: 700;
+    }
+
+    .btn-light {
+        background-color: #f8f9fa;
+        color: #000;
+    }
+
+    .btn-light:hover {
+        background-color: #e2e6ea;
+    }
+
+    .card-img-top {
+        border-radius: 10px;
+    }

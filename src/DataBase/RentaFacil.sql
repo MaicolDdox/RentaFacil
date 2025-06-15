@@ -34,10 +34,44 @@ CREATE TABLE IF NOT EXISTS `arrendatarios` (
   CONSTRAINT `arrendatarios_ibfk_3` FOREIGN KEY (`id_propietario`) REFERENCES `propietarios` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla rentafacil.arrendatarios: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla rentafacil.arrendatarios: ~2 rows (aproximadamente)
 INSERT INTO `arrendatarios` (`id`, `id_usuario`, `id_propiedad`, `id_propietario`) VALUES
 	(30, 66, 12, 7),
 	(31, 67, 14, 7);
+
+-- Volcando estructura para tabla rentafacil.conceptos_pago
+CREATE TABLE IF NOT EXISTS `conceptos_pago` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `id_contrato` int NOT NULL,
+  `periodo` varchar(7) COLLATE utf8mb4_general_ci NOT NULL COMMENT 'Formato: YYYY-MM (e.g., 2025-06)',
+  `concepto` enum('arriendo','agua','luz','gas','internet','seguro','daños','mantenimiento') COLLATE utf8mb4_general_ci NOT NULL,
+  `monto_por_pagar` decimal(10,2) NOT NULL,
+  `estado` enum('Pendiente','Completado','Retrasado') COLLATE utf8mb4_general_ci DEFAULT 'Pendiente',
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `id_contrato` (`id_contrato`),
+  CONSTRAINT `conceptos_pago_ibfk_1` FOREIGN KEY (`id_contrato`) REFERENCES `contratos` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=129 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Volcando datos para la tabla rentafacil.conceptos_pago: ~16 rows (aproximadamente)
+INSERT INTO `conceptos_pago` (`id`, `id_contrato`, `periodo`, `concepto`, `monto_por_pagar`, `estado`, `created_at`, `updated_at`) VALUES
+	(113, 42, '2025-06', 'arriendo', 1.00, 'Retrasado', '2025-06-13 16:40:39', '2025-06-13 17:01:44'),
+	(114, 42, '2025-06', 'agua', 1.00, 'Retrasado', '2025-06-13 16:40:39', '2025-06-13 17:05:09'),
+	(115, 42, '2025-06', 'luz', 1.00, 'Retrasado', '2025-06-13 16:40:39', '2025-06-13 16:54:40'),
+	(116, 42, '2025-06', 'gas', 1.00, 'Retrasado', '2025-06-13 16:40:39', '2025-06-14 09:28:09'),
+	(117, 42, '2025-06', 'internet', 11.00, 'Retrasado', '2025-06-13 16:40:39', '2025-06-14 09:28:12'),
+	(118, 42, '2025-06', 'seguro', 1.00, 'Retrasado', '2025-06-13 16:40:39', '2025-06-13 16:54:42'),
+	(119, 42, '2025-06', 'daños', 1.00, 'Retrasado', '2025-06-13 16:40:39', '2025-06-13 16:54:43'),
+	(120, 42, '2025-06', 'mantenimiento', 1.00, 'Retrasado', '2025-06-13 16:40:39', '2025-06-13 16:54:44'),
+	(121, 42, '2025-07', 'arriendo', 2.00, 'Pendiente', '2025-06-14 09:28:26', '2025-06-14 09:28:26'),
+	(122, 42, '2025-07', 'agua', 2.00, 'Pendiente', '2025-06-14 09:28:26', '2025-06-14 09:28:26'),
+	(123, 42, '2025-07', 'luz', 2.00, 'Pendiente', '2025-06-14 09:28:26', '2025-06-14 09:28:26'),
+	(124, 42, '2025-07', 'gas', 2.00, 'Pendiente', '2025-06-14 09:28:26', '2025-06-14 09:28:26'),
+	(125, 42, '2025-07', 'internet', 2.00, 'Pendiente', '2025-06-14 09:28:26', '2025-06-14 09:28:26'),
+	(126, 42, '2025-07', 'seguro', 2.00, 'Pendiente', '2025-06-14 09:28:26', '2025-06-14 09:28:26'),
+	(127, 42, '2025-07', 'daños', 2.00, 'Pendiente', '2025-06-14 09:28:26', '2025-06-14 09:28:26'),
+	(128, 42, '2025-07', 'mantenimiento', 2.00, 'Pendiente', '2025-06-14 09:28:26', '2025-06-14 09:28:26');
 
 -- Volcando estructura para tabla rentafacil.contratos
 CREATE TABLE IF NOT EXISTS `contratos` (
@@ -54,9 +88,11 @@ CREATE TABLE IF NOT EXISTS `contratos` (
   KEY `id_arrendatario` (`id_arrendatario`),
   CONSTRAINT `contratos_ibfk_1` FOREIGN KEY (`id_propiedad`) REFERENCES `propiedades` (`id`),
   CONSTRAINT `contratos_ibfk_2` FOREIGN KEY (`id_arrendatario`) REFERENCES `arrendatarios` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla rentafacil.contratos: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla rentafacil.contratos: ~1 rows (aproximadamente)
+INSERT INTO `contratos` (`id`, `id_propiedad`, `id_arrendatario`, `fecha_inicio`, `fecha_fin`, `estado`, `created_at`, `updated_at`) VALUES
+	(42, 12, 30, '2025-06-13', '2025-06-25', 'Activo', '2025-06-13 16:09:11', '2025-06-13 16:09:11');
 
 -- Volcando estructura para tabla rentafacil.contratos_enviados
 CREATE TABLE IF NOT EXISTS `contratos_enviados` (
@@ -77,9 +113,11 @@ CREATE TABLE IF NOT EXISTS `contratos_enviados` (
   CONSTRAINT `contratos_enviados_ibfk_2` FOREIGN KEY (`id_propietario`) REFERENCES `propietarios` (`id`),
   CONSTRAINT `contratos_enviados_ibfk_3` FOREIGN KEY (`id_propiedad`) REFERENCES `propiedades` (`id`),
   CONSTRAINT `contratos_enviados_ibfk_4` FOREIGN KEY (`id_contrato_asociado`) REFERENCES `contratos` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla rentafacil.contratos_enviados: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla rentafacil.contratos_enviados: ~1 rows (aproximadamente)
+INSERT INTO `contratos_enviados` (`id`, `id_arrendatario`, `id_propietario`, `id_propiedad`, `archivo_pdf`, `fecha_envio`, `estado`, `id_contrato_asociado`) VALUES
+	(14, 30, 7, 12, '../../../public/assets/pdf/contratos/contrato_66_20250613210833.pdf', '2025-06-13 16:08:33', 'Revisado', 42);
 
 -- Volcando estructura para tabla rentafacil.estado_pagos
 CREATE TABLE IF NOT EXISTS `estado_pagos` (
@@ -133,7 +171,7 @@ CREATE TABLE IF NOT EXISTS `imagenes_propiedad` (
   CONSTRAINT `imagenes_propiedad_ibfk_1` FOREIGN KEY (`id_propiedad`) REFERENCES `propiedades` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla rentafacil.imagenes_propiedad: ~3 rows (aproximadamente)
+-- Volcando datos para la tabla rentafacil.imagenes_propiedad: ~4 rows (aproximadamente)
 INSERT INTO `imagenes_propiedad` (`id`, `id_propiedad`, `url_imagen`, `descripcion`, `orden`) VALUES
 	(14, 12, 'assets/img/propiedades/6848555b19526_1.png', 'Imagen 1', 1),
 	(16, 14, 'assets/img/propiedades/68485ae743a50_2.jpeg', 'Imagen 1', 1),
@@ -183,9 +221,14 @@ CREATE TABLE IF NOT EXISTS `postulaciones` (
   UNIQUE KEY `correo` (`correo`),
   KEY `id_propiedad` (`id_propiedad`),
   CONSTRAINT `postulaciones_ibfk_1` FOREIGN KEY (`id_propiedad`) REFERENCES `propiedades` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla rentafacil.postulaciones: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla rentafacil.postulaciones: ~4 rows (aproximadamente)
+INSERT INTO `postulaciones` (`id`, `id_propiedad`, `nombre_postulante`, `correo`, `telefono_postulante`, `fecha_postulacion`) VALUES
+	(34, 14, 'Jhon Sebastian', 'jhon@gmail.com', '3214567890', '2025-06-14 13:06:37'),
+	(35, 14, 'Isabella Gasca', 'isa@gmail.com', '3108860569', '2025-06-15 16:23:32'),
+	(36, 16, 'Un Random', 'random@gmail.com', '3108860987', '2025-06-15 16:23:45'),
+	(37, 14, 'Daniela mi amor', 'danielaamormio@gmail.com', '3108860987', '2025-06-15 16:24:10');
 
 -- Volcando estructura para tabla rentafacil.propiedades
 CREATE TABLE IF NOT EXISTS `propiedades` (
@@ -205,7 +248,7 @@ CREATE TABLE IF NOT EXISTS `propiedades` (
 
 -- Volcando datos para la tabla rentafacil.propiedades: ~4 rows (aproximadamente)
 INSERT INTO `propiedades` (`id`, `id_propietario`, `direccion`, `estado`, `precio`, `descripcion`, `zona`, `created_at`, `updated_at`) VALUES
-	(12, 7, 'calle 45 Sur #45-79', 'Disponible', 4000000.00, 'Casa grande colombiana', 'Tello', '2025-06-10 10:55:07', '2025-06-12 16:05:18'),
+	(12, 7, 'calle 45 Sur #45-79', 'Ocupado', 4000000.00, 'Casa grande colombiana', 'Tello', '2025-06-10 10:55:07', '2025-06-13 16:09:11'),
 	(14, 7, 'La Septima Cr.9 #12-90 B', 'Disponible', 2000000.00, 'Casa central espaciosa pero no para una familia tan grande', 'Tello', '2025-06-10 11:18:47', '2025-06-12 14:10:56'),
 	(16, 7, 'Calle 90-A #45-77', 'Disponible', 5000000.00, 'Casa grande y moderna', 'Tello', '2025-06-10 19:44:41', '2025-06-12 14:21:33'),
 	(17, 7, 'Cr.8 #190-D', 'Disponible', 50000.00, 'Casa humilde en zona guerrillera', 'Tello', '2025-06-10 19:48:51', '2025-06-11 10:52:19');
@@ -219,7 +262,7 @@ CREATE TABLE IF NOT EXISTS `propietarios` (
   CONSTRAINT `propietarios_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla rentafacil.propietarios: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla rentafacil.propietarios: ~1 rows (aproximadamente)
 INSERT INTO `propietarios` (`id`, `id_usuario`) VALUES
 	(7, 60);
 
