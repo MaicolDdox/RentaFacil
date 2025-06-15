@@ -1,8 +1,13 @@
 <?php
 
 require '../../../config/config.php';
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+
+session_start();
+if (!isset($_SESSION['loading_shown'])) {
+    $_SESSION['loading_shown'] = true;
+    $show_loading = true;
+} else {
+    $show_loading = false;
 }
 
 // Obtener datos del usuario logueado
@@ -34,13 +39,17 @@ switch ($pagina) {
     case 'configuraciones':
         $contenido = 'configDatos.php';
         break;
+    case 'home':
+        $contenido = 'main.php';
     default:
         $contenido = 'main.php';
         break;
 }
 ?>
 <?php include '../../layouts/container/Arrendatario_Propietario/header.php'; ?>
+
 <nav class="nav flex-column">
+    <a href="?page=home" class="nav-link"><i class="fa-solid fa-briefcase"></i> Home</a>
     <a href="?page=propiedades" class="nav-link"><i class="fas fa-home"></i> Propiedades</a>
     <a href="?page=arrendatarios" class="nav-link"><i class="fas fa-users"></i> Arrendatarios</a>
     <a href="?page=contratos" class="nav-link"><i class="fas fa-file-contract"></i> Contratos</a>

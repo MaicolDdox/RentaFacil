@@ -1,0 +1,62 @@
+ /* Estilos para home.php */
+ body {
+     color: #fff;
+ }
+
+ .stat-card {
+     border-radius: 15px;
+     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+     transition: transform 0.2s;
+ }
+
+ .stat-card:hover {
+     transform: translateY(-5px);
+ }
+
+ .bg-success {
+     background-color: #28a745 !important;
+ }
+
+ .bg-primary {
+     background-color: #007bff !important;
+ }
+
+ .bg-warning {
+     background-color: #ffc107 !important;
+ }
+
+ .card.bg-secondary {
+     border: 2px solid #6c757d;
+     border-radius: 15px;
+ }
+
+ .card.bg-secondary .card-body {
+     padding: 20px;
+ }
+
+ .card-title {
+     font-size: 1.25rem;
+     font-weight: 600;
+ }
+
+ .display-4 {
+     font-size: 2.5rem;
+     font-weight: 700;
+ }
+
+ .btn-light {
+     background-color: #f8f9fa;
+     color: #000;
+ }
+
+ .btn-light:hover {
+     background-color: #e2e6ea;
+ }
+
+ #postulacionesChart {
+     background-color: #fff;
+     border-radius: 10px;
+     max-height: 300px;
+ }
+
+ 

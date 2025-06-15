@@ -80,567 +80,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['postularse'])) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href=".../../../../../../public/assets/img/logoRF.png" type="image/x-icon">
+    <link rel="stylesheet" href="../../../../public/assets/css/visitante.css">
     <title>Postulaciones - Renta Fácil</title>
 </head>
 
-<style>
-    /* Variables CSS - Misma paleta del diseño principal */
-    :root {
-        --primary-color: #0f0f0f;
-        --secondary-color: #1e293b;
-        --accent-color: #3b82f6;
-        --accent-light: #60a5fa;
-        --text-light: #ffffff;
-        --text-dark: #1f2937;
-        --text-gray: #6b7280;
-        --silver: #c0c0c0;
-        --platinum: #e5e7eb;
-        --steel-blue: #475569;
-        --dark-gray: #374151;
-        --light-gray: #f8fafc;
-        --gradient-primary: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        --gradient-secondary: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-        --gradient-accent: linear-gradient(135deg,rgb(97, 140, 193) 0%,rgb(184, 200, 228) 10%);
-        --gradient-silver: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
-        --gradient-dark: linear-gradient(135deg, #111827 0%, #1f2937 100%);
-        --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.1);
-        --shadow-medium: 0 8px 25px rgba(0, 0, 0, 0.15);
-        --shadow-heavy: 0 15px 35px rgba(0, 0, 0, 0.2);
-        --border-radius: 12px;
-        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    /* Reset y base */
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    body {
-        font-family: "Inter", sans-serif;
-        line-height: 1.6;
-        color: var(--text-dark);
-        overflow-x: hidden;
-        background: linear-gradient(135deg, #0f0f0f 0%, #1f2937 50%, #111827 100%);
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-    }
-
-    /* Navbar mejorado */
-    .navbar {
-        background: rgba(15, 15, 15, 0.95) !important;
-        backdrop-filter: blur(10px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 1rem 0;
-        transition: var(--transition);
-    }
-
-    .navbar.scrolled {
-        background: rgba(15, 15, 15, 0.98) !important;
-        box-shadow: var(--shadow-medium);
-    }
-
-    .logo {
-        width: 50px;
-        height: 50px;
-        margin-right: 0.5rem;
-        border-radius: 50%;
-        transition: var(--transition);
-        box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-    }
-
-    .logo:hover {
-        transform: rotate(360deg) scale(1.1);
-        box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
-    }
-
-    .navbar-brand {
-        font-size: 1.5rem;
-        font-weight: 700;
-        text-decoration: none;
-        background: var(--gradient-accent);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-
-    .nav-link {
-        color: var(--text-light) !important;
-        font-weight: 500;
-        padding: 0.5rem 1rem !important;
-        border-radius: var(--border-radius);
-        transition: var(--transition);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .nav-link::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: var(--gradient-primary);
-        transition: var(--transition);
-        z-index: -1;
-    }
-
-    .nav-link:hover::before {
-        left: 0;
-    }
-
-    .nav-link:hover {
-        color: white !important;
-        transform: translateY(-2px);
-    }
-
-    .navbar-toggler {
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        border-radius: var(--border-radius);
-        padding: 0.5rem;
-        transition: var(--transition);
-    }
-
-    .navbar-toggler:hover {
-        border-color: var(--accent-color);
-        transform: scale(1.05);
-    }
-
-    .navbar-toggler-icon {
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-    }
-
-    .btn {
-        background: var(--gradient-secondary);
-        color: white;
-        border: none;
-        padding: 0.75rem 1.5rem;
-        border-radius: var(--border-radius);
-        font-weight: 600;
-        text-decoration: none;
-        transition: var(--transition);
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-    }
-
-    .btn::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: var(--gradient-accent);
-        transition: var(--transition);
-        z-index: -1;
-    }
-
-    .btn:hover::before {
-        left: 0;
-    }
-
-    .btn:hover {
-        color: white;
-        transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
-    }
-
-    /* Contenedor principal */
-    .main-container {
-        position: relative;
-        padding: 120px 0 80px;
-        overflow: hidden;
-        flex: 1;
-    }
-
-    .main-container::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        animation: float 6s ease-in-out infinite;
-        z-index: 1;
-    }
-
-    @keyframes float {
-
-        0%,
-        100% {
-            transform: translateY(0px);
-        }
-
-        50% {
-            transform: translateY(-20px);
-        }
-    }
-
-    .main-container .container {
-        position: relative;
-        z-index: 2;
-    }
-
-    .main-container h2 {
-        font-size: clamp(2rem, 4vw, 3rem);
-        font-weight: 700;
-        margin-bottom: 2rem;
-        background: var(--gradient-accent);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        color: var(--text-light);
-    }
-
-    /* Tarjetas de propiedades mejoradas */
-    .property-card {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 20px;
-        overflow: hidden;
-        transition: var(--transition);
-        height: 100%;
-        box-shadow: var(--shadow-light);
-    }
-
-    .property-card:hover {
-        transform: translateY(-10px);
-        box-shadow: var(--shadow-heavy);
-        border-color: rgba(59, 130, 246, 0.3);
-    }
-
-    .property-card .card-img-top {
-        height: 250px;
-        object-fit: cover;
-        transition: var(--transition);
-    }
-
-    .property-card:hover .card-img-top {
-        transform: scale(1.05);
-    }
-
-    .property-card .card-body {
-        padding: 1.5rem;
-        color: var(--text-light);
-    }
-
-    .property-card .card-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        margin-bottom: 1rem;
-        color: var(--text-light);
-    }
-
-    .property-card .card-text {
-        margin-bottom: 0.5rem;
-        opacity: 0.9;
-        color: var(--platinum);
-    }
-
-    .property-card .price-text {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--accent-light);
-        margin-bottom: 1rem;
-    }
-
-    /* Botones de las tarjetas */
-    .btn-info {
-        background: var(--gradient-secondary);
-        border: none;
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: var(--border-radius);
-        font-weight: 600;
-        transition: var(--transition);
-        text-decoration: none;
-        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-    }
-
-    .btn-info:hover {
-        background: var(--gradient-accent);
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
-    }
-
-    .btn-primary {
-        background: var(--gradient-primary);
-        border: none;
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: var(--border-radius);
-        font-weight: 600;
-        transition: var(--transition);
-        text-decoration: none;
-        box-shadow: 0 4px 15px rgba(30, 41, 59, 0.3);
-    }
-
-    .btn-primary:hover {
-        background: var(--gradient-accent);
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
-    }
-
-    .btn-secondary {
-        background: var(--gradient-silver);
-        border: none;
-        color: var(--text-dark);
-        padding: 0.5rem 1rem;
-        border-radius: var(--border-radius);
-        font-weight: 600;
-        transition: var(--transition);
-        text-decoration: none;
-    }
-
-    .btn-secondary:hover {
-        background: var(--gradient-primary);
-        color: white;
-        transform: translateY(-2px);
-    }
-
-    /* Modales mejorados */
-    .modal-content {
-        background: rgba(15, 15, 15, 0.95) !important;
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 20px;
-        box-shadow: var(--shadow-heavy);
-    }
-
-    .modal-header {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 1.5rem;
-    }
-
-    .modal-title {
-        font-weight: 700;
-        background: var(--gradient-accent);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-
-    .btn-close-white {
-        filter: invert(1) grayscale(100%) brightness(200%);
-    }
-
-    .modal-body {
-        padding: 1.5rem;
-        color: var(--text-light);
-    }
-
-    .modal-body img {
-        border-radius: var(--border-radius);
-        box-shadow: var(--shadow-medium);
-    }
-
-    .modal-footer {
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 1.5rem;
-    }
-
-    /* Formularios mejorados */
-    .form-control {
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: var(--border-radius);
-        color: var(--text-light);
-        padding: 0.75rem 1rem;
-        transition: var(--transition);
-    }
-
-    .form-control:focus {
-        background: rgba(255, 255, 255, 0.15);
-        border-color: var(--accent-color);
-        color: var(--text-light);
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    }
-
-    .form-control::placeholder {
-        color: rgba(255, 255, 255, 0.6);
-    }
-
-    .form-label {
-        color: var(--text-light);
-        font-weight: 500;
-        margin-bottom: 0.5rem;
-    }
-
-    /* Alertas mejoradas */
-    .alert {
-        border-radius: var(--border-radius);
-        border: none;
-        font-weight: 500;
-        margin-bottom: 2rem;
-        backdrop-filter: blur(10px);
-    }
-
-    .alert-danger {
-        background: rgba(220, 53, 69, 0.1);
-        color: #ff6b6b;
-        border: 1px solid rgba(220, 53, 69, 0.3);
-    }
-
-    .alert-success {
-        background: rgba(40, 167, 69, 0.1);
-        color: #51cf66;
-        border: 1px solid rgba(40, 167, 69, 0.3);
-    }
-
-    /* Galería de imágenes en modal */
-    .image-gallery {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-top: 1rem;
-    }
-
-    .image-gallery img {
-        width: 120px;
-        height: 80px;
-        object-fit: cover;
-        border-radius: 8px;
-        transition: var(--transition);
-        cursor: pointer;
-    }
-
-    .image-gallery img:hover {
-        transform: scale(1.1);
-        box-shadow: var(--shadow-medium);
-    }
-
-    /* Mensaje de no resultados */
-    .no-results {
-        text-align: center;
-        padding: 4rem 2rem;
-        color: var(--text-light);
-        opacity: 0.8;
-    }
-
-    .no-results i {
-        font-size: 4rem;
-        color: var(--accent-light);
-        margin-bottom: 1rem;
-    }
-
-    /* Footer mejorado */
-    footer {
-        background: var(--primary-color);
-        color: var(--text-light);
-        padding: 3rem 0 1.5rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        margin-top: auto;
-    }
-
-    .brand-name {
-        font-size: 1.5rem;
-        font-weight: 700;
-        background: var(--gradient-accent);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin-bottom: 0.5rem;
-    }
-
-    .text-small {
-        font-size: 0.9rem;
-        opacity: 0.8;
-        line-height: 1.4;
-        color: var(--platinum);
-    }
-
-    .contact-info {
-        opacity: 0.9;
-    }
-
-    .contact-info strong {
-        color: var(--accent-light) !important;
-    }
-
-    /* Scroll to Top Button */
-    .scroll-to-top {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        width: 50px;
-        height: 50px;
-        background: var(--gradient-secondary);
-        color: white;
-        border: none;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: var(--transition);
-        opacity: 0;
-        visibility: hidden;
-        z-index: 1000;
-        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-    }
-
-    .scroll-to-top.visible {
-        opacity: 1;
-        visibility: visible;
-    }
-
-    .scroll-to-top:hover {
-        background: var(--gradient-accent);
-        transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-        .main-container {
-            padding: 100px 0 60px;
-        }
-
-        .main-container h2 {
-            font-size: 2rem;
-        }
-
-        .property-card .card-img-top {
-            height: 200px;
-        }
-
-        footer {
-            text-align: center;
-        }
-
-        .image-gallery img {
-            width: 100px;
-            height: 70px;
-        }
-    }
-
-    /* Animaciones adicionales */
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .fade-in-up {
-        animation: fadeInUp 0.6s ease-out;
-    }
-
-    /* Smooth scrolling */
-    html {
-        scroll-behavior: smooth;
-    }
-</style>
 
 <body>
     <div class="page-wrapper d-flex flex-column min-vh-100">
@@ -693,15 +136,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['postularse'])) {
                 </div>
             </nav>
         </header>
-
-
-
-
         <div class="flex-grow-1 d-flex flex-column">
             <div class="container flex-grow-1 d-flex flex-clumn">
                 <div class="container">
-
-
                     <div class="main-container">
                         <div class="text-center mb-5" data-aos="fade-up">
                             <h2>
@@ -713,11 +150,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['postularse'])) {
                             </p>
                         </div>
                     </div>
-
-
-
-
-
                     <?php if (!empty($error)): ?>
                         <div class="alert alert-danger text-center fade-in-up" data-aos="fade-up">
                             <i class="fas fa-exclamation-triangle me-2"></i>
@@ -917,14 +349,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['postularse'])) {
                         <?php endif; ?>
                     </div>
                 </div>
-
-
-
-
-
-
-
-
             </div>
         </div>
 
@@ -973,87 +397,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['postularse'])) {
         <i class="fas fa-chevron-up"></i>
     </button>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
-        crossorigin="anonymous"></script>
+
+</body>
+
+</html>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
+    crossorigin="anonymous"></script>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
-        crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
+    crossorigin="anonymous"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="../../../../public/assets/JavaScript/visitante.js"></script>
 
-    <script>
-        // Inicialización cuando el DOM está listo
-        document.addEventListener("DOMContentLoaded", () => {
-            // Inicializar AOS (Animate On Scroll)
-            AOS.init({
-                duration: 1000,
-                easing: "ease-in-out",
-                once: true,
-                offset: 100,
-            });
-
-            // Navbar scroll effect
-            const navbar = document.querySelector(".navbar");
-            let lastScrollTop = 0;
-
-            window.addEventListener("scroll", () => {
-                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-                if (scrollTop > 100) {
-                    navbar.classList.add("scrolled");
-                } else {
-                    navbar.classList.remove("scrolled");
-                }
-
-                // Hide/show navbar on scroll
-                if (scrollTop > lastScrollTop && scrollTop > 200) {
-                    navbar.style.transform = "translateY(-100%)";
-                } else {
-                    navbar.style.transform = "translateY(0)";
-                }
-                lastScrollTop = scrollTop;
-            });
-
-            // Scroll to top button functionality
-            const scrollToTopBtn = document.getElementById("scrollToTop");
-
-            window.addEventListener("scroll", () => {
-                if (window.pageYOffset > 300) {
-                    scrollToTopBtn.classList.add("visible");
-                } else {
-                    scrollToTopBtn.classList.remove("visible");
-                }
-            });
-
-            scrollToTopBtn.addEventListener("click", () => {
-                window.scrollTo({
-                    top: 0,
-                    behavior: "smooth",
-                });
-            });
-
-            // Smooth scrolling para enlaces internos
-            document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-                anchor.addEventListener("click", function(e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute("href"));
-                    if (target) {
-                        const offsetTop = target.offsetTop - 80;
-                        window.scrollTo({
-                            top: offsetTop,
-                            behavior: "smooth",
-                        });
-                    }
-                });
-            });
-        });
-    </script>
-
+<script>
     <?php if ((!empty($error) || !empty($success)) && isset($_POST['propiedad_id'])): ?>
-        <script>
+            <
+            script >
             document.addEventListener('DOMContentLoaded', function() {
                 var modalId = 'postularModal<?php echo htmlspecialchars($_POST['propiedad_id']); ?>';
                 var modalElement = document.getElementById(modalId);
@@ -1062,21 +425,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['postularse'])) {
                     modal.show();
                 }
             });
-        </script>
-    <?php endif; ?>
-    <?php if (!empty($success)): ?>
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: '¡Éxito!',
-                text: '<?php echo $success; ?>',
-                confirmButtonText: 'Aceptar',
-                willClose: () => {
-                    window.location.href = 'filtro.php<?php echo !empty($zona) ? "?zona=" . urlencode($zona) : ""; ?>';
-                }
-            });
-        </script>
-    <?php endif; ?>
-</body>
-
-</html>
+</script>
+<?php endif; ?>
+<?php if (!empty($success)): ?>
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: '<?php echo $success; ?>',
+            confirmButtonText: 'Aceptar',
+            willClose: () => {
+                window.location.href = 'filtro.php<?php echo !empty($zona) ? "?zona=" . urlencode($zona) : ""; ?>';
+            }
+        });
+    </script>
+<?php endif; ?>
+</script>

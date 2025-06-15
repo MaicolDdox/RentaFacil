@@ -1,6 +1,13 @@
 <?php
 // Iniciar la sesión
 session_start();
+if (!isset($_SESSION['loading_shown'])) {
+    $_SESSION['loading_shown'] = true;
+    $show_loading = true;
+} else {
+    $show_loading = false;
+}
+
 require '../../../config/config.php';
 
 // Verificar si el usuario ha iniciado sesión y es arrendatario
@@ -29,7 +36,8 @@ switch ($pagina) {
     case 'configuraciones':
         $contenido = 'configDatos.php';
         break;
-
+    case 'home':
+        $contenido = 'main.php';
     default:
         $contenido = 'main.php';
         break;
@@ -44,6 +52,7 @@ $usuario = $stm->fetch(PDO::FETCH_ASSOC);
 <?php include '../../layouts/container/Arrendatario_Propietario/header.php'; ?>
 
 <nav class="nav flex-column">
+    <a href="?page=home" class="nav-link"><i class="fa-solid fa-briefcase"></i> Home</a>
     <a href="?page=contratos" class="nav-link"><i class="fas fa-file-contract"></i> Contratos</a>
     <a href="?page=calendario" class="nav-link"><i class="fas fa-calendar"></i> Calendario</a>
     <a href="?page=pagos" class="nav-link"><i class="fas fa-money-bill"></i> Pagos</a>
