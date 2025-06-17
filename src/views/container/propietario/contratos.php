@@ -103,12 +103,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['finalizar'])) {
                 $stmt = $pdo->prepare("DELETE FROM contratos_enviados WHERE id_contrato_asociado = :contrato_id");
                 $stmt->execute(['contrato_id' => $contrato_id]);
 
-                // Eliminar registros relacionados en estado_pagos
-                $stmt = $pdo->prepare("DELETE FROM estado_pagos WHERE id_contrato = :contrato_id");
+                // Eliminar comprobantes de pago asociados a conceptos de este contrato
+                $stmt = $pdo->prepare("DELETE cp FROM comprobantes_pago cp
+                INNER JOIN conceptos_pago c ON cp.id_concepto_pago = c.id
+                WHERE c.id_contrato = :contrato_id");
                 $stmt->execute(['contrato_id' => $contrato_id]);
 
-                // Eliminar registros relacionados en pagos (si existen)
-                $stmt = $pdo->prepare("DELETE FROM pagos WHERE id_contrato = :contrato_id");
+                // Eliminar conceptos de pago asociados a este contrato
+                $stmt = $pdo->prepare("DELETE FROM conceptos_pago WHERE id_contrato = :contrato_id");
                 $stmt->execute(['contrato_id' => $contrato_id]);
 
                 // Eliminar el contrato

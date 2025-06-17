@@ -26,6 +26,41 @@ try {
     $error = "Error al obtener el arrendatario: " . $e->getMessage();
 }
 
+// Procesar la subida de comprobante
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['subir_comprobante'])) {
+    $id_concepto = $_POST['id_concepto'];
+    $archivo = $_FILES['comprobante'];
+
+    if ($archivo['error'] === UPLOAD_ERR_OK) {
+        $allowed_types = ['image/jpeg', 'image/png', 'application/pdf'];
+        if (in_array($archivo['type'], $allowed_types)) {
+            $extension = pathinfo($archivo['name'], PATHINFO_EXTENSION);
+            $nombre_archivo = "comprobante_{$id_concepto}_" . time() . "." . $extension;
+            $ruta_destino = '../../../public/assets/comprobantes/' . $nombre_archivo;
+
+            if (move_uploaded_file($archivo['tmp_name'], $ruta_destino)) {
+                try {
+                    $stmt = $pdo->prepare("INSERT INTO comprobantes_pago (id_concepto_pago, archivo, tipo_archivo) VALUES (:id_concepto, :archivo, :tipo_archivo)");
+                    $stmt->execute([
+                        'id_concepto' => $id_concepto,
+                        'archivo' => $nombre_archivo,
+                        'tipo_archivo' => $archivo['type']
+                    ]);
+                    $success = "Comprobante subido correctamente.";
+                } catch (PDOException $e) {
+                    $error = "Error al guardar el comprobante: " . $e->getMessage();
+                }
+            } else {
+                $error = "Error al mover el archivo.";
+            }
+        } else {
+            $error = "Tipo de archivo no permitido. Solo se aceptan JPEG, PNG y PDF.";
+        }
+    } else {
+        $error = "Error al subir el archivo.";
+    }
+}
+
 // Obtener contratos activos y conceptos de pago
 $contratos = [];
 try {
@@ -90,7 +125,7 @@ function getSpanishMonth($monthNum) {
 }
 ?>
 
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <link rel="stylesheet" href="../../../../public/assets/css/propietarioPagos.css">
 <div class="container mt-5">
     <div class="card" style="background-color: #2c2c2c; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
@@ -138,6 +173,7 @@ function getSpanishMonth($monthNum) {
                                                                         <th><i class="fas fa-list me-1"></i>Concepto</th>
                                                                         <th><i class="fas fa-dollar-sign me-1"></i>Monto por Pagar</th>
                                                                         <th><i class="fas fa-info-circle me-1"></i>Estado</th>
+                                                                        <th><i class="fas fa-upload me-1"></i>Comprobante</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -171,12 +207,25 @@ function getSpanishMonth($monthNum) {
                                                                                     <span class="badge bg-secondary"><i class="fas fa-clock me-1"></i><?php echo ucfirst($concepto['estado']); ?></span>
                                                                                 <?php endif; ?>
                                                                             </td>
+                                                                            <td>
+                                                                                <?php if ($concepto['estado'] === 'Completado'): ?>
+                                                                                    <form method="POST" enctype="multipart/form-data" style="display:inline;">
+                                                                                        <input type="hidden" name="subir_comprobante" value="1">
+                                                                                        <input type="hidden" name="id_concepto" value="<?php echo $concepto['id']; ?>">
+                                                                                        <input type="file" name="comprobante" accept="image/jpeg,image/png,application/pdf" class="form-control form-control-sm mb-2">
+                                                                                        <button type="submit" class="btn btn-info btn-sm"><i class="fas fa-upload"></i> Subir</button>
+                                                                                    </form>
+                                                                                <?php else: ?>
+                                                                                    <span class="text-muted">No disponible</span>
+                                                                                <?php endif; ?>
+                                                                            </td>
                                                                         </tr>
                                                                         <?php $total += $concepto['monto_por_pagar']; ?>
                                                                     <?php endforeach; ?>
                                                                     <tr class="total-row">
                                                                         <td colspan="2"><strong><i class="fas fa-calculator me-1"></i>Total</strong></td>
                                                                         <td><strong>$<?php echo number_format($total, 2); ?></strong></td>
+                                                                        <td></td>
                                                                     </tr>
                                                                 </tbody>
                                                             </table>

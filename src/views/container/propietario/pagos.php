@@ -81,18 +81,21 @@ try {
     $stmt->execute(['id_propietario' => $id_propietario]);
     $contratos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    foreach ($contratos as &$contrato) {
+    foreach ($contratos as $index => $contrato) {
         $stmt = $pdo->prepare("SELECT periodo FROM conceptos_pago WHERE id_contrato = :id_contrato GROUP BY periodo ORDER BY periodo");
         $stmt->execute(['id_contrato' => $contrato['contrato_id']]);
         $periodos = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
         $meses = [];
         foreach ($periodos as $periodo) {
-            $stmt = $pdo->prepare("SELECT * FROM conceptos_pago WHERE id_contrato = :id_contrato AND periodo = :periodo");
+            $stmt = $pdo->prepare("SELECT cp.*, cp2.archivo, cp2.tipo_archivo, cp2.estado AS estado_comprobante
+                FROM conceptos_pago cp
+                LEFT JOIN comprobantes_pago cp2 ON cp.id = cp2.id_concepto_pago
+                WHERE cp.id_contrato = :id_contrato AND cp.periodo = :periodo");
             $stmt->execute(['id_contrato' => $contrato['contrato_id'], 'periodo' => $periodo]);
             $meses[$periodo] = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
-        $contrato['meses'] = $meses;
+        $contratos[$index]['meses'] = $meses;
     }
 } catch (PDOException $e) {
     $error = "Error al cargar los datos de contratos: " . $e->getMessage();
@@ -172,57 +175,64 @@ function getSpanishMonth($monthNum)
                                                                         <th><i class="fas fa-list me-1"></i>Concepto</th>
                                                                         <th><i class="fas fa-dollar-sign me-1"></i>Monto por Pagar</th>
                                                                         <th><i class="fas fa-info-circle me-1"></i>Estado</th>
+                                                                        <th><i class="fas fa-eye me-1"></i>Comprobante</th>
                                                                         <th><i class="fas fa-cogs me-1"></i>Acciones</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
                                                                     <?php
                                                                     $total = 0;
-                                                                    if (is_array($mesData)) {
-                                                                        foreach ($mesData as $concepto): ?>
-                                                                            <tr>
-                                                                                <td>
-                                                                                    <?php
-                                                                                        $iconosConcepto = [
-                                                                                            'arriendo' => 'fa-house-user',
-                                                                                            'agua' => 'fa-tint',
-                                                                                            'luz' => 'fa-bolt',
-                                                                                            'gas' => 'fa-fire',
-                                                                                            'internet' => 'fa-wifi',
-                                                                                            'seguro' => 'fa-shield-alt',
-                                                                                            'daños' => 'fa-tools',
-                                                                                            'mantenimiento' => 'fa-wrench'
-                                                                                        ];
-                                                                                        $icon = isset($iconosConcepto[$concepto['concepto']]) ? $iconosConcepto[$concepto['concepto']] : 'fa-tag';
-                                                                                    ?>
-                                                                                    <i class="fas <?php echo $icon; ?> me-1"></i>
-                                                                                    <?php echo ucfirst($concepto['concepto']); ?>
-                                                                                </td>
-                                                                                <td>$<?php echo number_format($concepto['monto_por_pagar'], 2); ?></td>
-                                                                                <td>
-                                                                                    <?php if ($concepto['estado'] === 'Completado'): ?>
-                                                                                        <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i><?php echo ucfirst($concepto['estado']); ?></span>
-                                                                                    <?php elseif ($concepto['estado'] === 'Retrasado'): ?>
-                                                                                        <span class="badge bg-warning text-dark"><i class="fas fa-exclamation-triangle me-1"></i><?php echo ucfirst($concepto['estado']); ?></span>
-                                                                                    <?php else: ?>
-                                                                                        <span class="badge bg-secondary"><i class="fas fa-clock me-1"></i><?php echo ucfirst($concepto['estado']); ?></span>
-                                                                                    <?php endif; ?>
-                                                                                </td>
-                                                                                <td>
-                                                                                    <form method="POST" style="display:inline;">
-                                                                                        <input type="hidden" name="actualizar_estado" value="1">
-                                                                                        <input type="hidden" name="id_concepto" value="<?php echo $concepto['id']; ?>">
-                                                                                        <button type="submit" name="estado" value="Completado" class="btn btn-success btn-sm" title="Marcar como Completado"><i class="fas fa-check"></i></button>
-                                                                                        <button type="submit" name="estado" value="Retrasado" class="btn btn-warning btn-sm" title="Marcar como Retrasado"><i class="fas fa-exclamation-triangle"></i></button>
-                                                                                    </form>
-                                                                                </td>
-                                                                            </tr>
-                                                                            <?php $total += $concepto['monto_por_pagar']; ?>
-                                                                    <?php endforeach;
-                                                                    } ?>
+                                                                    $iconosConcepto = [
+                                                                        'arriendo' => 'fa-house-user',
+                                                                        'agua' => 'fa-tint',
+                                                                        'luz' => 'fa-bolt',
+                                                                        'gas' => 'fa-fire',
+                                                                        'internet' => 'fa-wifi',
+                                                                        'seguro' => 'fa-shield-alt',
+                                                                        'daños' => 'fa-tools',
+                                                                        'mantenimiento' => 'fa-wrench'
+                                                                    ];
+                                                                    foreach ($mesData as $concepto):
+                                                                        $icon = isset($iconosConcepto[$concepto['concepto']]) ? $iconosConcepto[$concepto['concepto']] : 'fa-tag';
+                                                                        $comprobante = isset($concepto['archivo']) ? $concepto['archivo'] : null;
+                                                                    ?>
+                                                                        <tr>
+                                                                            <td>
+                                                                                <i class="fas <?php echo $icon; ?> me-1"></i>
+                                                                                <?php echo ucfirst($concepto['concepto']); ?>
+                                                                            </td>
+                                                                            <td>$<?php echo number_format($concepto['monto_por_pagar'], 2); ?></td>
+                                                                            <td>
+                                                                                <?php if ($concepto['estado'] === 'Completado'): ?>
+                                                                                    <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i><?php echo ucfirst($concepto['estado']); ?></span>
+                                                                                <?php elseif ($concepto['estado'] === 'Retrasado'): ?>
+                                                                                    <span class="badge bg-warning text-dark"><i class="fas fa-exclamation-triangle me-1"></i><?php echo ucfirst($concepto['estado']); ?></span>
+                                                                                <?php else: ?>
+                                                                                    <span class="badge bg-secondary"><i class="fas fa-clock me-1"></i><?php echo ucfirst($concepto['estado']); ?></span>
+                                                                                <?php endif; ?>
+                                                                            </td>
+                                                                            <td>
+                                                                                <?php if ($comprobante): ?>
+                                                                                    <a href="../../../public/assets/comprobantes/<?php echo htmlspecialchars($comprobante); ?>" target="_blank" class="btn btn-info btn-sm"><i class="fas fa-eye"></i> Mirar</a>
+                                                                                <?php else: ?>
+                                                                                    <span class="text-muted">No disponible</span>
+                                                                                <?php endif; ?>
+                                                                            </td>
+                                                                            <td>
+                                                                                <form method="POST" style="display:inline;">
+                                                                                    <input type="hidden" name="actualizar_estado" value="1">
+                                                                                    <input type="hidden" name="id_concepto" value="<?php echo $concepto['id']; ?>">
+                                                                                    <button type="submit" name="estado" value="Completado" class="btn btn-success btn-sm" title="Marcar como Completado"><i class="fas fa-check"></i></button>
+                                                                                    <button type="submit" name="estado" value="Retrasado" class="btn btn-warning btn-sm" title="Marcar como Retrasado"><i class="fas fa-exclamation-triangle"></i></button>
+                                                                                </form>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <?php $total += $concepto['monto_por_pagar']; ?>
+                                                                    <?php endforeach; ?>
                                                                     <tr class="total-row">
                                                                         <td colspan="2"><strong><i class="fas fa-calculator me-1"></i>Total</strong></td>
                                                                         <td><strong>$<?php echo number_format($total, 2); ?></strong></td>
+                                                                        <td></td>
                                                                         <td></td>
                                                                     </tr>
                                                                 </tbody>
@@ -264,16 +274,16 @@ function getSpanishMonth($monthNum)
                                                 <div class="row">
                                                     <?php $conceptos = ['arriendo', 'agua', 'luz', 'gas', 'internet', 'seguro', 'daños', 'mantenimiento']; ?>
                                                     <?php
-                                                        $iconosConcepto = [
-                                                            'arriendo' => 'fa-house-user',
-                                                            'agua' => 'fa-tint',
-                                                            'luz' => 'fa-bolt',
-                                                            'gas' => 'fa-fire',
-                                                            'internet' => 'fa-wifi',
-                                                            'seguro' => 'fa-shield-alt',
-                                                            'daños' => 'fa-tools',
-                                                            'mantenimiento' => 'fa-wrench'
-                                                        ];
+                                                    $iconosConcepto = [
+                                                        'arriendo' => 'fa-house-user',
+                                                        'agua' => 'fa-tint',
+                                                        'luz' => 'fa-bolt',
+                                                        'gas' => 'fa-fire',
+                                                        'internet' => 'fa-wifi',
+                                                        'seguro' => 'fa-shield-alt',
+                                                        'daños' => 'fa-tools',
+                                                        'mantenimiento' => 'fa-wrench'
+                                                    ];
                                                     ?>
                                                     <?php foreach ($conceptos as $c): ?>
                                                         <div class="col-md-6 mb-2">

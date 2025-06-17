@@ -39,8 +39,7 @@ $daysInMonth = (int)$firstDayOfMonth->format('t');
 
 // Obtener el contrato activo del arrendatario
 try {
-    $stmt = $pdo->prepare("
-        SELECT c.id, c.fecha_fin, p.direccion
+    $stmt = $pdo->prepare("SELECT c.id, c.fecha_fin, p.direccion
         FROM contratos c
         JOIN propiedades p ON c.id_propiedad = p.id
         WHERE c.id_arrendatario = :id_arrendatario
@@ -51,7 +50,16 @@ try {
     $contrato = $stmt->fetch(PDO::FETCH_ASSOC);
 
     // Determinar el día de finalización si existe un contrato
-    $finalizacionDia = $contrato ? (int)(new DateTime($contrato['fecha_fin']))->format('j') : null;
+    if ($contrato) {
+        $fechaFin = new DateTime($contrato['fecha_fin']);
+        $finalizacionDia = (int)$fechaFin->format('j');
+        $finalizacionMes = (int)$fechaFin->format('n');
+        $finalizacionAnio = (int)$fechaFin->format('Y');
+    } else {
+        $finalizacionDia = null;
+        $finalizacionMes = null;
+        $finalizacionAnio = null;
+    }
 } catch (PDOException $e) {
     $error = "Error al cargar el contrato: " . $e->getMessage();
 }
@@ -80,9 +88,10 @@ try {
             $nextMonth = $month == 12 ? 1 : $month + 1;
             $nextYear = $month == 12 ? $year + 1 : $year;
             ?>
-            <a href="?page=calendario_arrendatario&month=<?php echo $prevMonth; ?>&year=<?php echo $prevYear; ?>">< Anterior</a>
-            <h2><?php echo $firstDayOfMonth->format('F Y'); ?></h2>
-            <a href="?page=calendario_arrendatario&month=<?php echo $nextMonth; ?>&year=<?php echo $nextYear; ?>">Siguiente ></a>
+            <a href="?page=calendario&month=<?php echo $prevMonth; ?>&year=<?php echo $prevYear; ?>">
+                < Anterior</a>
+                    <h2><?php echo $firstDayOfMonth->format('F Y'); ?></h2>
+                    <a href="?page=calendario&month=<?php echo $nextMonth; ?>&year=<?php echo $nextYear; ?>">Siguiente ></a>
         </div>
 
         <!-- Tabla del calendario -->
@@ -112,7 +121,11 @@ try {
                         } elseif ($currentDay > $daysInMonth) {
                             echo "<td class='empty'></td>";
                         } else {
-                            $hasEvent = $finalizacionDia === $currentDay;
+                            $hasEvent = (
+                                $finalizacionDia === $currentDay &&
+                                $finalizacionMes === (int)$month &&
+                                $finalizacionAnio === (int)$year
+                            );
                             echo "<td" . ($hasEvent ? " class='has-event'" : "") . ">";
                             echo $currentDay;
 
